@@ -56,19 +56,54 @@ language just for PeakLayout: *System Settings › General › Language & Region
 
 ## Installation
 
-Requirements: macOS 14+, Xcode. Replace `DEVELOPMENT_TEAM` in `PeakLayout.xcodeproj` with your own
-Apple developer team (Xcode › Signing & Capabilities).
+Requires macOS 14 or later. Runs on Apple silicon and Intel Macs. No Xcode needed.
+
+1. Download **PeakLayout-x.y.dmg** from [Releases](https://github.com/peakode/PeakLayout/releases/latest).
+2. Open the DMG and drag **PeakLayout** onto **Applications**.
+3. Launch PeakLayout from Applications.
+   > **First launch:** this build is not notarized by Apple yet, so macOS blocks it once with
+   > *"PeakLayout" can't be opened*. Click **Done**, open **System Settings › Privacy & Security**,
+   > scroll down and click **Open Anyway** next to PeakLayout, then confirm. You only do this once.
+4. Allow the permission prompts (see [Permissions](#permissions)).
+5. Click the menu bar icon › **Settings…** and add your pinned items from the desktop. If your Finder
+   icon size differs from the defaults, place the pinned items where you want them and press
+   **Measure from current positions**.
+
+To uninstall: menu bar icon › **Quit**, then move PeakLayout from Applications to the Trash.
+
+## Permissions
+
+PeakLayout runs entirely on your Mac. It has no network access, collects no data, and doesn't need
+Accessibility, Screen Recording or Full Disk Access.
+
+| Permission | Where macOS asks | Why PeakLayout needs it |
+|---|---|---|
+| **Automation › Finder** | *"PeakLayout" wants access to control "Finder"* | Desktop icon positions belong to Finder. PeakLayout reads each icon's position and moves icons through Finder's AppleScript interface. Without it, nothing can be arranged. |
+| **Desktop folder** | *"PeakLayout" would like to access files in your Desktop folder* | To notice when files are added, renamed or removed so new items get the next free slot. Only file names and dates are read; file contents are never opened. |
+| **Downloads folder** | *"PeakLayout" would like to access files in your Downloads folder* | To move finished downloads to the desktop. Only asked if *Move new downloads to the desktop* is on; turning it off stops all access to Downloads. |
+| **Login item** | Notification: *"PeakLayout" added a login item* | So the layout is restored after a restart without launching the app by hand. Turn it off in Settings or in *System Settings › General › Login Items*. |
+
+The app is not sandboxed because a sandboxed app can't send Apple Events to Finder. You can review or
+revoke any of these under *System Settings › Privacy & Security* (Automation, Files and Folders) and
+*General › Login Items*.
+
+## Building from source
+
+Requires Xcode. Replace `DEVELOPMENT_TEAM` in `PeakLayout.xcodeproj` with your own Apple developer
+team (Xcode › Signing & Capabilities), then:
 
 ```bash
 xcodebuild -project PeakLayout.xcodeproj -scheme PeakLayout -configuration Release -derivedDataPath build
 cp -R build/Build/Products/Release/PeakLayout.app /Applications/
-open /Applications/PeakLayout.app
 ```
 
-On first launch macOS asks for permission to control Finder and to access Desktop and Downloads.
-*Launch at login* is turned on automatically. Then open the menu bar icon › **Settings…** and add your
-pinned items from the desktop. If your Finder icon size differs from the defaults, place the pinned
-items where you want them and press **Measure from current positions**.
+### Making a release
+
+`scripts/release.sh` builds a universal app and a drag-to-Applications DMG in `dist/`;
+`scripts/release.sh --publish` also creates the GitHub release. With a *Developer ID Application*
+certificate in the keychain and a notary profile
+(`xcrun notarytool store-credentials PeakLayout-notary --apple-id … --team-id …`), the script signs and
+notarizes the app so it opens without the first-launch warning.
 
 ## Architecture
 

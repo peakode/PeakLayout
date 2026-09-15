@@ -56,19 +56,55 @@ dil seçmek istersen: *Sistem Ayarları › Genel › Dil ve Bölge › Uygulama
 
 ## Kurulum
 
-Gereksinim: macOS 14+, Xcode. `PeakLayout.xcodeproj` içindeki `DEVELOPMENT_TEAM` değerini kendi Apple
-geliştirici takımınla değiştir (Xcode › Signing & Capabilities).
+macOS 14 veya üstü gerekir. Apple silicon ve Intel Mac'lerde çalışır. Xcode gerekmez.
+
+1. [Releases](https://github.com/peakode/PeakLayout/releases/latest) sayfasından **PeakLayout-x.y.dmg** dosyasını indir.
+2. DMG'yi aç ve **PeakLayout**'u **Applications** klasörüne sürükle.
+3. PeakLayout'u Uygulamalar'dan başlat.
+   > **İlk açılış:** bu sürüm henüz Apple tarafından onaylı (notarized) değil, bu yüzden macOS bir kez
+   > *"PeakLayout" açılamıyor* uyarısıyla engeller. **Bitti**'ye bas, **Sistem Ayarları › Gizlilik ve
+   > Güvenlik**'i aç, aşağı kaydırıp PeakLayout'un yanındaki **Yine de Aç**'a bas ve onayla. Bunu sadece
+   > bir kez yaparsın.
+4. İzin pencerelerini onayla (bkz. [İzinler](#izinler)).
+5. Menü çubuğu ikonu › **Ayarlar…** yolundan masaüstündeki sabit öğelerini ekle. Finder ikon boyutun
+   varsayılandan farklıysa sabit öğeleri istediğin yere koyup **Şu anki konumlardan ölç**'e bas.
+
+Kaldırmak için: menü çubuğu ikonu › **Çıkış**, sonra PeakLayout'u Uygulamalar'dan Çöp Sepeti'ne taşı.
+
+<a name="izinler"></a>
+## İzinler
+
+PeakLayout tamamen senin Mac'inde çalışır. İnternete bağlanmaz, veri toplamaz; Erişilebilirlik, Ekran
+Kaydı ya da Tam Disk Erişimi istemez.
+
+| İzin | macOS nerede sorar | PeakLayout neden ister |
+|---|---|---|
+| **Otomasyon › Finder** | *"PeakLayout", "Finder"ı denetlemek istiyor* | Masaüstü ikonlarının konumları Finder'a aittir. PeakLayout her ikonun konumunu Finder'ın AppleScript arayüzüyle okur ve taşır. Bu izin olmadan hiçbir şey yerleştirilemez. |
+| **Masaüstü klasörü** | *"PeakLayout" Masaüstü klasörünüzdeki dosyalara erişmek istiyor* | Dosya eklendiğini, adı değiştiğini ya da silindiğini fark edip yeni öğeyi sıradaki boş yere koymak için. Sadece dosya adları ve tarihleri okunur, dosyaların içeriği açılmaz. |
+| **Downloads klasörü** | *"PeakLayout" İndirilenler klasörünüzdeki dosyalara erişmek istiyor* | İnmesi biten dosyaları masaüstüne taşımak için. Sadece *Downloads'a gelenleri masaüstüne taşı* açıksa istenir; kapatınca Downloads'a hiç erişilmez. |
+| **Oturum açma öğesi** | Bildirim: *"PeakLayout" bir oturum açma öğesi ekledi* | Bilgisayar yeniden başladığında uygulamayı elle açmadan düzenin geri gelmesi için. Ayarlar'dan ya da *Sistem Ayarları › Genel › Oturum Açma Öğeleri*'nden kapatılabilir. |
+
+Uygulama sandbox'lı değildir, çünkü sandbox içindeki bir uygulama Finder'a Apple Event gönderemez. Bu
+izinlerin hepsini *Sistem Ayarları › Gizlilik ve Güvenlik* (Otomasyon, Dosyalar ve Klasörler) ve
+*Genel › Oturum Açma Öğeleri* altından görebilir ya da geri alabilirsin.
+
+## Kaynaktan derleme
+
+Xcode gerekir. `PeakLayout.xcodeproj` içindeki `DEVELOPMENT_TEAM` değerini kendi Apple geliştirici
+takımınla değiştir (Xcode › Signing & Capabilities), sonra:
 
 ```bash
 xcodebuild -project PeakLayout.xcodeproj -scheme PeakLayout -configuration Release -derivedDataPath build
 cp -R build/Build/Products/Release/PeakLayout.app /Applications/
-open /Applications/PeakLayout.app
 ```
 
-İlk açılışta macOS, Finder'ı denetleme ve Masaüstü/Downloads erişimi için izin ister. *Oturum açılınca
-başlat* kendiliğinden açılır. Sonra menü çubuğu ikonu › **Ayarlar…** yolundan masaüstündeki sabit
-öğelerini ekle. Finder ikon boyutun varsayılandan farklıysa sabit öğeleri istediğin yere koyup **Şu anki
-konumlardan ölç**'e bas.
+### Sürüm yayınlama
+
+`scripts/release.sh`, universal uygulamayı ve sürükle-bırak DMG'yi `dist/` klasörüne üretir;
+`scripts/release.sh --publish` ayrıca GitHub release'ini oluşturur. Anahtar zincirinde *Developer ID
+Application* sertifikası ve bir notary profili
+(`xcrun notarytool store-credentials PeakLayout-notary --apple-id … --team-id …`) varsa script uygulamayı
+imzalayıp Apple'a onaylatır; böylece ilk açılış uyarısı da kalkar.
 
 ## Mimari
 
