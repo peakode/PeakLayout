@@ -60,10 +60,8 @@ Requires macOS 14 or later. Runs on Apple silicon and Intel Macs. No Xcode neede
 
 1. Download **PeakLayout-x.y.dmg** from [Releases](https://github.com/peakode/PeakLayout/releases/latest).
 2. Open the DMG and drag **PeakLayout** onto **Applications**.
-3. Launch PeakLayout from Applications.
-   > **First launch:** this build is not notarized by Apple yet, so macOS blocks it once with
-   > *"PeakLayout" can't be opened*. Click **Done**, open **System Settings › Privacy & Security**,
-   > scroll down and click **Open Anyway** next to PeakLayout, then confirm. You only do this once.
+3. Launch PeakLayout from Applications. The app is signed with Developer ID and notarized by Apple, so
+   macOS only asks the usual *"downloaded from the internet"* confirmation — click **Open**.
 4. Allow the permission prompts (see [Permissions](#permissions)).
 5. Click the menu bar icon › **Settings…** and add your pinned items from the desktop. If your Finder
    icon size differs from the defaults, place the pinned items where you want them and press
@@ -103,7 +101,8 @@ cp -R build/Build/Products/Release/PeakLayout.app /Applications/
 `scripts/release.sh --publish` also creates the GitHub release. With a *Developer ID Application*
 certificate in the keychain and a notary profile
 (`xcrun notarytool store-credentials PeakLayout-notary --apple-id … --team-id …`), the script signs and
-notarizes the app so it opens without the first-launch warning.
+notarizes the app and the DMG. Without them it falls back to an ad-hoc signature, and users have to
+confirm the first launch in *System Settings › Privacy & Security › Open Anyway*.
 
 ## Architecture
 

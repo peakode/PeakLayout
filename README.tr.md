@@ -60,11 +60,8 @@ macOS 14 veya üstü gerekir. Apple silicon ve Intel Mac'lerde çalışır. Xcod
 
 1. [Releases](https://github.com/peakode/PeakLayout/releases/latest) sayfasından **PeakLayout-x.y.dmg** dosyasını indir.
 2. DMG'yi aç ve **PeakLayout**'u **Applications** klasörüne sürükle.
-3. PeakLayout'u Uygulamalar'dan başlat.
-   > **İlk açılış:** bu sürüm henüz Apple tarafından onaylı (notarized) değil, bu yüzden macOS bir kez
-   > *"PeakLayout" açılamıyor* uyarısıyla engeller. **Bitti**'ye bas, **Sistem Ayarları › Gizlilik ve
-   > Güvenlik**'i aç, aşağı kaydırıp PeakLayout'un yanındaki **Yine de Aç**'a bas ve onayla. Bunu sadece
-   > bir kez yaparsın.
+3. PeakLayout'u Uygulamalar'dan başlat. Uygulama Developer ID ile imzalı ve Apple tarafından onaylı
+   (notarized) olduğu için macOS sadece alışılmış *"internetten indirildi"* onayını sorar — **Aç**'a bas.
 4. İzin pencerelerini onayla (bkz. [İzinler](#izinler)).
 5. Menü çubuğu ikonu › **Ayarlar…** yolundan masaüstündeki sabit öğelerini ekle. Finder ikon boyutun
    varsayılandan farklıysa sabit öğeleri istediğin yere koyup **Şu anki konumlardan ölç**'e bas.
@@ -104,7 +101,8 @@ cp -R build/Build/Products/Release/PeakLayout.app /Applications/
 `scripts/release.sh --publish` ayrıca GitHub release'ini oluşturur. Anahtar zincirinde *Developer ID
 Application* sertifikası ve bir notary profili
 (`xcrun notarytool store-credentials PeakLayout-notary --apple-id … --team-id …`) varsa script uygulamayı
-imzalayıp Apple'a onaylatır; böylece ilk açılış uyarısı da kalkar.
+ve DMG'yi imzalayıp Apple'a onaylatır. Bunlar yoksa ad-hoc imzaya düşer ve kullanıcılar ilk açılışı
+*Sistem Ayarları › Gizlilik ve Güvenlik › Yine de Aç* ile onaylamak zorunda kalır.
 
 ## Mimari
 

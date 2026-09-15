@@ -3,6 +3,7 @@
 #
 #   scripts/release.sh             → dist/PeakLayout-<version>.dmg
 #   scripts/release.sh --publish   → also creates GitHub release v<version> with the DMG
+#   scripts/release.sh --publish-only → publishes the DMG already in dist/ without rebuilding
 #
 # Signing:
 #   - If a "Developer ID Application" certificate is in the keychain, the app and DMG are signed with it.
@@ -15,7 +16,9 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 PUBLISH=false
+PUBLISH_ONLY=false
 [[ "${1:-}" == "--publish" ]] && PUBLISH=true
+[[ "${1:-}" == "--publish-only" ]] && PUBLISH=true && PUBLISH_ONLY=true
 NOTARY_PROFILE="${NOTARY_PROFILE:-PeakLayout-notary}"
 
 VERSION=$(xcodebuild -project PeakLayout.xcodeproj -scheme PeakLayout -configuration Release -showBuildSettings 2>/dev/null \
@@ -25,6 +28,11 @@ DIST=dist
 STAGE="$DIST/stage"
 DMG="$DIST/PeakLayout-$VERSION.dmg"
 
+NOTARIZE=false
+if $PUBLISH_ONLY; then
+  [[ -f "$DMG" ]] || { echo "No $DMG — run scripts/release.sh first"; exit 1; }
+  xcrun stapler validate -q "$DMG" 2>/dev/null && NOTARIZE=true
+else
 echo "▸ Building PeakLayout $VERSION (Release, universal)"
 rm -rf build "$DIST"
 xcodebuild -project PeakLayout.xcodeproj -scheme PeakLayout -configuration Release \
@@ -36,7 +44,6 @@ cp -R "$APP_BUILD" "$STAGE/"
 APP="$STAGE/PeakLayout.app"
 
 DEV_ID=$(security find-identity -v -p codesigning | awk -F'"' '/Developer ID Application/ {print $2; exit}')
-NOTARIZE=false
 if [[ -n "$DEV_ID" ]]; then
   echo "▸ Signing with $DEV_ID"
   codesign --force --options runtime --timestamp --entitlements PeakLayout.entitlements --sign "$DEV_ID" "$APP"
@@ -72,6 +79,7 @@ if [[ -n "$DEV_ID" ]]; then
 fi
 
 shasum -a 256 "$DMG" | tee "$DMG.sha256"
+fi
 
 if $PUBLISH; then
   echo "▸ Publishing GitHub release v$VERSION"
