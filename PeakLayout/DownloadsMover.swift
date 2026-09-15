@@ -76,7 +76,7 @@ final class DownloadsMover {
                 moved.append(destination.lastPathComponent)
                 lastSizes[name] = nil
             } catch {
-                onError("\(name) taşınamadı: \(error.localizedDescription)")
+                onError(String(localized: "Could not move \(name): \(error.localizedDescription)"))
                 lastSizes[name] = nil
             }
         }

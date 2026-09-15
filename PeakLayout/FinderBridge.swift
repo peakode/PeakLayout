@@ -11,7 +11,7 @@ enum FinderError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .script(let message): return "Finder betiği hata verdi: \(message)"
+        case .script(let message): return String(localized: "Finder script failed: \(message)")
         }
     }
 }
@@ -72,7 +72,7 @@ enum FinderBridge {
 
     private static func run(_ source: String) throws -> NSAppleEventDescriptor {
         guard let script = NSAppleScript(source: source) else {
-            throw FinderError.script("betik oluşturulamadı")
+            throw FinderError.script(String(localized: "could not create script"))
         }
         var error: NSDictionary?
         let result = script.executeAndReturnError(&error)

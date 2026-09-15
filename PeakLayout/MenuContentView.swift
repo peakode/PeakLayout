@@ -7,11 +7,19 @@ struct MenuContentView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             VStack(alignment: .leading, spacing: 2) {
-                Text(model.screen?.name ?? "Ekran bulunamadı").font(.headline)
+                if let name = model.screen?.name {
+                    Text(verbatim: name).font(.headline)
+                } else {
+                    Text("No display found").font(.headline)
+                }
                 HStack(spacing: 6) {
-                    Text(model.screen?.resolutionText ?? "")
-                    Text("·")
-                    Text(model.activeProfile?.title ?? "Profil yok (varsayılan ölçüler)")
+                    Text(verbatim: model.screen?.resolutionText ?? "")
+                    Text(verbatim: "·")
+                    if let title = model.activeProfile?.title {
+                        Text(verbatim: title)
+                    } else {
+                        Text("No profile (default metrics)")
+                    }
                 }
                 .font(.caption)
                 .foregroundStyle(.secondary)
@@ -24,18 +32,18 @@ struct MenuContentView: View {
             }
 
             VStack(alignment: .leading, spacing: 4) {
-                Label(model.statusMessage, systemImage: "checkmark.circle")
+                Label { Text(verbatim: model.statusMessage) } icon: { Image(systemName: "checkmark.circle") }
                     .lineLimit(2)
                 if let date = model.lastApplied {
-                    Text("Son uygulama: \(date.formatted(date: .omitted, time: .shortened))")
+                    Text("Last applied: \(date.formatted(date: .omitted, time: .shortened))")
                         .foregroundStyle(.secondary)
                 }
                 if model.overflowCount > 0 {
-                    Label("\(model.overflowCount) dosya ekrana sığmadı", systemImage: "exclamationmark.triangle")
+                    Label("\(model.overflowCount) files didn't fit on screen", systemImage: "exclamationmark.triangle")
                         .foregroundStyle(.orange)
                 }
                 if let error = model.lastError {
-                    Label(error, systemImage: "xmark.octagon")
+                    Label { Text(verbatim: error) } icon: { Image(systemName: "xmark.octagon") }
                         .foregroundStyle(.red)
                         .fixedSize(horizontal: false, vertical: true)
                 }
@@ -45,24 +53,24 @@ struct MenuContentView: View {
             Divider()
 
             HStack {
-                Button("Şimdi uygula") { model.applyLayout(reason: "Elle") }
+                Button("Apply now") { model.applyLayout(reason: String(localized: "Manual")) }
                     .keyboardShortcut(.defaultAction)
-                Button("Boşlukları kapat") { model.compactSlots() }
+                Button("Close gaps") { model.compactSlots() }
             }
-            Toggle("Duraklat", isOn: $model.isPaused)
+            Toggle("Pause", isOn: $model.isPaused)
                 .onChange(of: model.isPaused) { _, paused in
-                    if !paused { model.applyLayout(reason: "Devam") }
+                    if !paused { model.applyLayout(reason: String(localized: "Resumed")) }
                 }
 
             Divider()
 
             HStack {
-                Button("Ayarlar…") {
+                Button("Settings…") {
                     openWindow(id: "settings")
                     NSApp.activate()
                 }
                 Spacer()
-                Button("Çıkış") { NSApp.terminate(nil) }
+                Button("Quit") { NSApp.terminate(nil) }
             }
         }
         .padding(14)

@@ -1,0 +1,612 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "": {
+      "shouldTranslate": false
+    },
+    "%@: %lld items placed": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@: %2$lld öğe yerleştirildi"
+          }
+        }
+      }
+    },
+    "%@: layout already correct": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@: yerleşim zaten doğru"
+          }
+        }
+      }
+    },
+    "%lld files didn't fit on screen": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld dosya ekrana sığmadı"
+          }
+        }
+      }
+    },
+    "%lld rows · %lld free columns · capacity %lld files": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld satır · %2$lld serbest sütun · %3$lld dosya kapasitesi"
+          }
+        }
+      }
+    },
+    "Add": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ekle"
+          }
+        }
+      }
+    },
+    "Apply now": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Şimdi uygula"
+          }
+        }
+      }
+    },
+    "At least 2 pinned items must be on the desktop to calibrate": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kalibrasyon için en az 2 sabit öğe masaüstünde olmalı"
+          }
+        }
+      }
+    },
+    "Backups": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yedekler"
+          }
+        }
+      }
+    },
+    "Behavior": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Davranış"
+          }
+        }
+      }
+    },
+    "Bottom inset": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alt boşluk"
+          }
+        }
+      }
+    },
+    "Calibrated: right inset %lld, row step %lld": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kalibre edildi: sağ boşluk %1$lld, satır aralığı %2$lld"
+          }
+        }
+      }
+    },
+    "Choose from desktop…": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Masaüstünden seç…"
+          }
+        }
+      }
+    },
+    "Close gaps": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Boşlukları kapat"
+          }
+        }
+      }
+    },
+    "Column step": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sütun aralığı"
+          }
+        }
+      }
+    },
+    "Could not change launch at login: %@": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Oturum açılış ayarı değiştirilemedi: %@"
+          }
+        }
+      }
+    },
+    "Could not move %@: %@": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ taşınamadı: %2$@"
+          }
+        }
+      }
+    },
+    "Could not place: %@": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yerleştirilemedi: %@"
+          }
+        }
+      }
+    },
+    "Current Finder positions are saved before every layout pass (last 20).": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Her yerleşimden önce Finder'daki mevcut konumlar kaydedilir (son 20)."
+          }
+        }
+      }
+    },
+    "Desktop changed": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Masaüstü değişti"
+          }
+        }
+      }
+    },
+    "Display changed": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ekran değişti"
+          }
+        }
+      }
+    },
+    "Display name contains": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ekran adı içerir"
+          }
+        }
+      }
+    },
+    "Display profile": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ekran profili"
+          }
+        }
+      }
+    },
+    "Drag to reorder. Changes take effect on the next layout pass.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sırayı değiştirmek için sürükle. Değişiklik bir sonraki yerleşimde uygulanır."
+          }
+        }
+      }
+    },
+    "Finder script failed: %@": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Finder betiği hata verdi: %@"
+          }
+        }
+      }
+    },
+    "First row y": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "İlk satır y"
+          }
+        }
+      }
+    },
+    "Gap columns": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Boş sütun sayısı"
+          }
+        }
+      }
+    },
+    "Gaps closed": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Boşluklar kapatıldı"
+          }
+        }
+      }
+    },
+    "Last applied: %@": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Son uygulama: %@"
+          }
+        }
+      }
+    },
+    "Last backup restored, automatic layout paused": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Son yedek geri yüklendi, otomatik düzen duraklatıldı"
+          }
+        }
+      }
+    },
+    "Launch at login": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Oturum açılınca başlat"
+          }
+        }
+      }
+    },
+    "MacBook built-in display": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MacBook dahili ekran"
+          }
+        }
+      }
+    },
+    "Manual": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elle"
+          }
+        }
+      }
+    },
+    "Measure from current positions": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Şu anki konumlardan ölç"
+          }
+        }
+      }
+    },
+    "Move new downloads to the desktop": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Downloads'a gelenleri masaüstüne taşı"
+          }
+        }
+      }
+    },
+    "Moved from Downloads: %@": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Downloads'tan taşındı: %@"
+          }
+        }
+      }
+    },
+    "Name": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ad"
+          }
+        }
+      }
+    },
+    "No backup found": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yedek bulunamadı"
+          }
+        }
+      }
+    },
+    "No display found": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ekran bulunamadı"
+          }
+        }
+      }
+    },
+    "No permission to control Finder. Turn on Finder for PeakLayout in System Settings › Privacy & Security › Automation.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Finder'ı kontrol izni yok. Sistem Ayarları › Gizlilik ve Güvenlik › Otomasyon'dan PeakLayout için Finder'ı aç."
+          }
+        }
+      }
+    },
+    "No profile (default metrics)": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profil yok (varsayılan ölçüler)"
+          }
+        }
+      }
+    },
+    "Not found on desktop": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Masaüstünde bulunamadı"
+          }
+        }
+      }
+    },
+    "Open backup folder": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yedek klasörünü aç"
+          }
+        }
+      }
+    },
+    "Pause": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Duraklat"
+          }
+        }
+      }
+    },
+    "PeakLayout": {
+      "shouldTranslate": false
+    },
+    "Pinned folder check": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sabit klasör kontrolü"
+          }
+        }
+      }
+    },
+    "Press when pinned folders are in place; right inset, first row and row step are measured.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sabit klasörler doğru yerdeyken bas; sağ boşluk, ilk satır ve satır aralığı ölçülür."
+          }
+        }
+      }
+    },
+    "Protect pinned folders (check every 20 s)": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sabit klasörleri koru (20 sn'de bir kontrol)"
+          }
+        }
+      }
+    },
+    "Quit": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Çıkış"
+          }
+        }
+      }
+    },
+    "Ready": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hazır"
+          }
+        }
+      }
+    },
+    "Resolution": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Çözünürlük"
+          }
+        }
+      }
+    },
+    "Restore last backup": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Son yedeğe geri dön"
+          }
+        }
+      }
+    },
+    "Resumed": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Devam"
+          }
+        }
+      }
+    },
+    "Retry": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tekrar deneme"
+          }
+        }
+      }
+    },
+    "Right column (top to bottom)": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sağ sütun (yukarıdan aşağı)"
+          }
+        }
+      }
+    },
+    "Right inset": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sağ kenar boşluğu"
+          }
+        }
+      }
+    },
+    "Row step": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Satır aralığı"
+          }
+        }
+      }
+    },
+    "Settings…": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ayarlar…"
+          }
+        }
+      }
+    },
+    "Startup": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Başlangıç"
+          }
+        }
+      }
+    },
+    "active": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "aktif"
+          }
+        }
+      }
+    },
+    "could not create script": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "betik oluşturulamadı"
+          }
+        }
+      }
+    },
+    "empty = match by resolution": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "boşsa çözünürlükle eşleşir"
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

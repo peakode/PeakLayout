@@ -21,7 +21,7 @@ struct DisplayProfile: Codable, Identifiable, Equatable {
     static let defaults: [DisplayProfile] = [
         DisplayProfile(title: "Samsung Odyssey 49\"", nameMatch: "Odyssey G9", width: 5120, height: 1440),
         DisplayProfile(title: "Samsung 27\"", nameMatch: "", width: 2560, height: 1440),
-        DisplayProfile(title: "MacBook dahili ekran", nameMatch: "", width: 1512, height: 982, builtIn: true),
+        DisplayProfile(title: String(localized: "MacBook built-in display"), nameMatch: "", width: 1512, height: 982, builtIn: true),
     ]
 }
 

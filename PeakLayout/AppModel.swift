@@ -13,7 +13,7 @@ final class AppModel: ObservableObject {
     @Published private(set) var icons: [DesktopIcon] = []
     @Published private(set) var looseItems: [DesktopItem] = []
     @Published private(set) var lastApplied: Date?
-    @Published private(set) var statusMessage = "Hazır" {
+    @Published private(set) var statusMessage = String(localized: "Ready") {
         didSet { log.info("\(self.statusMessage, privacy: .public)") }
     }
     @Published private(set) var lastError: String? {
@@ -53,7 +53,7 @@ final class AppModel: ObservableObject {
         watcher.start()
         desktopWatcher = watcher
 
-        let monitor = DisplayMonitor { [weak self] in self?.applyLayout(reason: "Ekran değişti") }
+        let monitor = DisplayMonitor { [weak self] in self?.applyLayout(reason: String(localized: "Display changed")) }
         monitor.start()
         displayMonitor = monitor
 
@@ -64,10 +64,10 @@ final class AppModel: ObservableObject {
             launchAtLogin = true
             settings.loginItemConfigured = true
         }
-        log.info("Oturum açılınca başlat: \(String(describing: SMAppService.mainApp.status.rawValue), privacy: .public)")
+        log.info("Launch at login status: \(String(describing: SMAppService.mainApp.status.rawValue), privacy: .public)")
 
         lastFileSystemNames = DesktopScanner.fileSystemNames()
-        applyLayout(reason: "Başlangıç")
+        applyLayout(reason: String(localized: "Startup"))
     }
 
     func updateDownloadsMover() {
@@ -77,7 +77,7 @@ final class AppModel: ObservableObject {
         let mover = DownloadsMover(
             baseline: settings.downloadsBaseline,
             onMoved: { [weak self] names in
-                self?.statusMessage = "Downloads'tan taşındı: \(names.joined(separator: ", "))"
+                self?.statusMessage = String(localized: "Moved from Downloads: \(names.joined(separator: ", "))")
             },
             onError: { [weak self] message in self?.lastError = message }
         )
@@ -90,7 +90,7 @@ final class AppModel: ObservableObject {
         guardTimer = nil
         guard settings.guardPinned else { return }
         guardTimer = Timer.scheduledTimer(withTimeInterval: 20, repeats: true) { [weak self] _ in
-            MainActor.assumeIsolated { self?.applyLayout(reason: "Sabit klasör kontrolü", pinnedOnly: true) }
+            MainActor.assumeIsolated { self?.applyLayout(reason: String(localized: "Pinned folder check"), pinnedOnly: true) }
         }
     }
 
@@ -99,7 +99,7 @@ final class AppModel: ObservableObject {
         // Finder'ın .DS_Store yazmaları da olay üretir; sadece dosya listesi değişince uygula.
         guard names != lastFileSystemNames else { return }
         lastFileSystemNames = names
-        applyLayout(reason: "Masaüstü değişti")
+        applyLayout(reason: String(localized: "Desktop changed"))
     }
 
     // MARK: - Yerleşim
@@ -144,14 +144,15 @@ final class AppModel: ObservableObject {
                 return abs(now.x - target.x) > 2 || abs(now.y - target.y) > 2
             }
             guard !moves.isEmpty else {
-                if !pinnedOnly { statusMessage = "\(reason): yerleşim zaten doğru" }
+                if !pinnedOnly { statusMessage = String(localized: "\(reason): layout already correct") }
                 return
             }
 
             BackupStore.save(current)
             let failed = try FinderBridge.apply(moves)
             lastApplied = Date()
-            statusMessage = "\(reason): \(moves.count - failed.count) öğe yerleştirildi"
+            let placed = moves.count - failed.count
+            statusMessage = String(localized: "\(reason): \(placed) items placed")
             if !failed.isEmpty { scheduleRetry(failed: failed) } else { retryCount = 0 }
         } catch {
             lastError = Self.describe(error)
@@ -161,30 +162,30 @@ final class AppModel: ObservableObject {
     /// Finder yeni dosyayı birkaç saniye geç tanıyabilir.
     private func scheduleRetry(failed: [String]) {
         guard retryCount < 3 else {
-            lastError = "Yerleştirilemedi: \(failed.joined(separator: ", "))"
+            lastError = String(localized: "Could not place: \(failed.joined(separator: ", "))")
             retryCount = 0
             return
         }
         retryCount += 1
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
-            self?.applyLayout(reason: "Tekrar deneme")
+            self?.applyLayout(reason: String(localized: "Retry"))
         }
     }
 
     func compactSlots() {
         settings.assignments.compact()
-        applyLayout(reason: "Boşluklar kapatıldı")
+        applyLayout(reason: String(localized: "Gaps closed"))
     }
 
     func restoreLastBackup() {
         guard let backup = BackupStore.latest() else {
-            lastError = "Yedek bulunamadı"
+            lastError = String(localized: "No backup found")
             return
         }
         isPaused = true
         do {
             try FinderBridge.apply(backup)
-            statusMessage = "Son yedek geri yüklendi, otomatik düzen duraklatıldı"
+            statusMessage = String(localized: "Last backup restored, automatic layout paused")
         } catch {
             lastError = Self.describe(error)
         }
@@ -198,7 +199,7 @@ final class AppModel: ObservableObject {
             let byName = Dictionary(current.map { ($0.name, $0) }, uniquingKeysWith: { a, _ in a })
             let pinned = settings.pinned.compactMap { byName[$0] }
             guard pinned.count >= 2, let first = pinned.first, let last = pinned.last else {
-                lastError = "Kalibrasyon için en az 2 sabit öğe masaüstünde olmalı"
+                lastError = String(localized: "At least 2 pinned items must be on the desktop to calibrate")
                 return
             }
             var metrics = activeMetrics
@@ -214,7 +215,8 @@ final class AppModel: ObservableObject {
                     width: Int(screen.size.width), height: Int(screen.size.height), metrics: metrics
                 ))
             }
-            statusMessage = "Kalibre edildi: sağ boşluk \(Int(metrics.rightInset)), satır \(Int(metrics.rowStep))"
+            let inset = Int(metrics.rightInset), step = Int(metrics.rowStep)
+            statusMessage = String(localized: "Calibrated: right inset \(inset), row step \(step)")
         } catch {
             lastError = Self.describe(error)
         }
@@ -233,7 +235,7 @@ final class AppModel: ObservableObject {
             do {
                 if newValue { try SMAppService.mainApp.register() } else { try SMAppService.mainApp.unregister() }
             } catch {
-                lastError = "Oturum açılış ayarı değiştirilemedi: \(error.localizedDescription)"
+                lastError = String(localized: "Could not change launch at login: \(error.localizedDescription)")
             }
             objectWillChange.send()
         }
@@ -242,7 +244,7 @@ final class AppModel: ObservableObject {
     private static func describe(_ error: Error) -> String {
         let text = error.localizedDescription
         if text.contains("-1743") || text.localizedCaseInsensitiveContains("not authorized") {
-            return "Finder'ı kontrol izni yok. Sistem Ayarları › Gizlilik ve Güvenlik › Otomasyon'dan PeakLayout için Finder'ı aç."
+            return String(localized: "No permission to control Finder. Turn on Finder for PeakLayout in System Settings › Privacy & Security › Automation.")
         }
         return text
     }

@@ -1,0 +1,70 @@
+{
+  "sourceLanguage": "en",
+  "version": "1.0",
+  "strings": {
+    "CFBundleDisplayName": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PeakLayout"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PeakLayout"
+          }
+        }
+      }
+    },
+    "NSAppleEventsUsageDescription": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PeakLayout controls Finder to read and set desktop icon positions."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PeakLayout, masaüstü ikonlarının konumlarını okuyup yerleştirmek için Finder'ı kontrol eder."
+          }
+        }
+      }
+    },
+    "NSDesktopFolderUsageDescription": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PeakLayout watches the Desktop to place new files in order."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PeakLayout, masaüstüne eklenen dosyaları sıraya koymak için masaüstünü izler."
+          }
+        }
+      }
+    },
+    "NSDownloadsFolderUsageDescription": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PeakLayout moves finished downloads to the Desktop."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PeakLayout, inmesi biten dosyaları masaüstüne taşır."
+          }
+        }
+      }
+    }
+  }
+}

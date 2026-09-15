@@ -88,9 +88,10 @@
 				};
 			};
 			buildConfigurationList = D1A00000000000000000000C /* Build configuration list for PBXProject "PeakLayout" */;
-			developmentRegion = tr;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				en,
 				tr,
 				Base,
 			);
@@ -179,9 +180,9 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "PeakLayout";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_LSUIElement = YES;
-				INFOPLIST_KEY_NSAppleEventsUsageDescription = "Masaüstü ikonlarının konumlarını okuyup yerleştirmek için Finder'ı kontrol eder.";
-				INFOPLIST_KEY_NSDesktopFolderUsageDescription = "Masaüstüne eklenen dosyaları algılayıp sıraya koymak için.";
-				INFOPLIST_KEY_NSDownloadsFolderUsageDescription = "Downloads'a inen dosyaları masaüstüne taşımak için.";
+				INFOPLIST_KEY_NSAppleEventsUsageDescription = "PeakLayout controls Finder to read and set desktop icon positions.";
+				INFOPLIST_KEY_NSDesktopFolderUsageDescription = "PeakLayout watches the Desktop to place new files in order.";
+				INFOPLIST_KEY_NSDownloadsFolderUsageDescription = "PeakLayout moves finished downloads to the Desktop.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -190,6 +191,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.peakode.PeakLayout;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 			};
@@ -210,9 +212,9 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "PeakLayout";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_LSUIElement = YES;
-				INFOPLIST_KEY_NSAppleEventsUsageDescription = "Masaüstü ikonlarının konumlarını okuyup yerleştirmek için Finder'ı kontrol eder.";
-				INFOPLIST_KEY_NSDesktopFolderUsageDescription = "Masaüstüne eklenen dosyaları algılayıp sıraya koymak için.";
-				INFOPLIST_KEY_NSDownloadsFolderUsageDescription = "Downloads'a inen dosyaları masaüstüne taşımak için.";
+				INFOPLIST_KEY_NSAppleEventsUsageDescription = "PeakLayout controls Finder to read and set desktop icon positions.";
+				INFOPLIST_KEY_NSDesktopFolderUsageDescription = "PeakLayout watches the Desktop to place new files in order.";
+				INFOPLIST_KEY_NSDownloadsFolderUsageDescription = "PeakLayout moves finished downloads to the Desktop.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -221,6 +223,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.peakode.PeakLayout;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 			};

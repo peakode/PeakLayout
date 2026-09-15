@@ -38,13 +38,13 @@ struct SettingsView: View {
             List {
                 ForEach(Array(model.settings.pinned.enumerated()), id: \.element) { index, name in
                     HStack {
-                        Text("\(index + 1).").monospacedDigit().foregroundStyle(.secondary)
-                        Text(name)
+                        Text(verbatim: "\(index + 1).").monospacedDigit().foregroundStyle(.secondary)
+                        Text(verbatim: name)
                         Spacer()
                         if !model.icons.contains(where: { $0.name == name }) {
                             Image(systemName: "exclamationmark.triangle")
                                 .foregroundStyle(.orange)
-                                .help("Masaüstünde bulunamadı")
+                                .help("Not found on desktop")
                         }
                         Button {
                             model.settings.pinned.remove(at: index)
@@ -59,20 +59,20 @@ struct SettingsView: View {
             .frame(minHeight: 220)
 
             HStack {
-                Picker("Ekle", selection: $newPinnedName) {
-                    Text("Masaüstünden seç…").tag("")
-                    ForEach(unpinnedDesktopNames, id: \.self) { Text($0).tag($0) }
+                Picker("Add", selection: $newPinnedName) {
+                    Text("Choose from desktop…").tag("")
+                    ForEach(unpinnedDesktopNames, id: \.self) { Text(verbatim: $0).tag($0) }
                 }
-                Button("Ekle") {
+                Button("Add") {
                     model.settings.pinned.append(newPinnedName)
                     newPinnedName = ""
                 }
                 .disabled(newPinnedName.isEmpty)
             }
         } header: {
-            Text("Sağ sütun (yukarıdan aşağı)")
+            Text("Right column (top to bottom)")
         } footer: {
-            Text("Sırayı değiştirmek için sürükle. Değişiklik bir sonraki uygulamada yerleşir.")
+            Text("Drag to reorder. Changes take effect on the next layout pass.")
         }
     }
 
@@ -85,27 +85,27 @@ struct SettingsView: View {
     // MARK: - Davranış
 
     private var behaviourSection: some View {
-        Section("Davranış") {
-            Toggle("Downloads'a gelenleri masaüstüne taşı", isOn: $model.settings.moveDownloads)
+        Section("Behavior") {
+            Toggle("Move new downloads to the desktop", isOn: $model.settings.moveDownloads)
                 .onChange(of: model.settings.moveDownloads) { model.updateDownloadsMover() }
-            Toggle("Sabit klasörleri koru (20 sn'de bir kontrol)", isOn: $model.settings.guardPinned)
+            Toggle("Protect pinned folders (check every 20 s)", isOn: $model.settings.guardPinned)
                 .onChange(of: model.settings.guardPinned) { model.updateGuardTimer() }
-            Toggle("Oturum açılınca başlat", isOn: Binding(
+            Toggle("Launch at login", isOn: Binding(
                 get: { model.launchAtLogin },
                 set: { model.launchAtLogin = $0 }
             ))
-            Button("Şimdi uygula") { model.applyLayout(reason: "Elle") }
+            Button("Apply now") { model.applyLayout(reason: String(localized: "Manual")) }
         }
     }
 
     private var backupSection: some View {
         Section {
-            Button("Son yedeğe geri dön") { model.restoreLastBackup() }
-            Button("Yedek klasörünü aç") { BackupStore.revealInFinder() }
+            Button("Restore last backup") { model.restoreLastBackup() }
+            Button("Open backup folder") { BackupStore.revealInFinder() }
         } header: {
-            Text("Yedekler")
+            Text("Backups")
         } footer: {
-            Text("Her yerleşimden önce Finder'daki mevcut konumlar kaydedilir (son 20).")
+            Text("Current Finder positions are saved before every layout pass (last 20).")
         }
     }
 
@@ -119,50 +119,52 @@ struct SettingsView: View {
 
     private var profilePicker: some View {
         HStack {
-            Picker("Ekran profili", selection: $selectedProfileID) {
+            Picker("Display profile", selection: $selectedProfileID) {
                 ForEach(model.settings.profiles) { profile in
                     let active = profile.id == model.activeProfile?.id
-                    Text(active ? "\(profile.title)  ● aktif" : profile.title).tag(Optional(profile.id))
+                    Text(verbatim: active ? "\(profile.title)  ● \(String(localized: "active"))" : profile.title).tag(Optional(profile.id))
                 }
             }
-            Button("Şu anki konumlardan ölç") {
+            Button("Measure from current positions") {
                 model.calibrateFromCurrentPositions()
                 selectedProfileID = model.activeProfile?.id
             }
-            .help("Sabit klasörler doğru yerdeyken bas; sağ boşluk, üst boşluk ve satır aralığı ölçülür.")
+            .help("Press when pinned folders are in place; right inset, first row and row step are measured.")
         }
     }
 
     private func metricsEditor(_ profile: Binding<DisplayProfile>) -> some View {
         Grid(alignment: .leading, horizontalSpacing: 16, verticalSpacing: 6) {
             GridRow {
-                Text("Ad"); TextField("", text: profile.title)
+                Text("Name"); TextField("", text: profile.title)
             }
             GridRow {
-                Text("Ekran adı içerir"); TextField("boşsa çözünürlükle eşleşir", text: profile.nameMatch)
+                Text("Display name contains"); TextField("empty = match by resolution", text: profile.nameMatch)
             }
             GridRow {
-                Text("Çözünürlük")
+                Text("Resolution")
                 HStack {
                     TextField("", value: profile.width, format: .number.grouping(.never)).frame(width: 70)
-                    Text("×")
+                    Text(verbatim: "×")
                     TextField("", value: profile.height, format: .number.grouping(.never)).frame(width: 70)
                 }
             }
             Divider().gridCellColumns(2)
-            metricRow("Sağ kenar boşluğu", profile.metrics.rightInset)
-            metricRow("İlk satır y", profile.metrics.topY)
-            metricRow("Sütun aralığı", profile.metrics.columnStep)
-            metricRow("Satır aralığı", profile.metrics.rowStep)
-            metricRow("Alt boşluk", profile.metrics.bottomInset)
+            metricRow("Right inset", profile.metrics.rightInset)
+            metricRow("First row y", profile.metrics.topY)
+            metricRow("Column step", profile.metrics.columnStep)
+            metricRow("Row step", profile.metrics.rowStep)
+            metricRow("Bottom inset", profile.metrics.bottomInset)
             GridRow {
-                Text("Boş sütun sayısı")
-                Stepper("\(profile.wrappedValue.metrics.gapColumns)", value: profile.metrics.gapColumns, in: 0...4)
+                Text("Gap columns")
+                Stepper(value: profile.metrics.gapColumns, in: 0...4) {
+                    Text(verbatim: "\(profile.wrappedValue.metrics.gapColumns)")
+                }
             }
         }
     }
 
-    private func metricRow(_ title: String, _ value: Binding<Double>) -> some View {
+    private func metricRow(_ title: LocalizedStringKey, _ value: Binding<Double>) -> some View {
         GridRow {
             Text(title)
             HStack {
@@ -181,7 +183,7 @@ struct SettingsView: View {
             LayoutPreview(engine: engine, pinned: model.settings.pinned, loose: model.looseItems,
                           assignments: model.settings.assignments, showLabels: true)
                 .frame(maxHeight: .infinity)
-            Text("\(engine.rows) satır · \(engine.freeColumns) serbest sütun · \(engine.capacity) dosya kapasitesi")
+            Text("\(engine.rows) rows · \(engine.freeColumns) free columns · capacity \(engine.capacity) files")
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }
