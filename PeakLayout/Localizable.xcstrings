@@ -84,6 +84,16 @@
         }
       }
     },
+    "1 full-screen zone": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 tam ekran bölgesi"
+          }
+        }
+      }
+    },
     "Accessibility permission is required to arrange windows. Turn on PeakLayout in System Settings › Privacy & Security › Accessibility.": {
       "localizations": {
         "tr": {
@@ -274,6 +284,16 @@
         }
       }
     },
+    "Copy rules from the active screen": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kuralları aktif ekrandan kopyala"
+          }
+        }
+      }
+    },
     "Could not arrange: %@": {
       "localizations": {
         "tr": {
@@ -404,6 +424,16 @@
         }
       }
     },
+    "Full screen": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tam ekran"
+          }
+        }
+      }
+    },
     "Gap between windows": {
       "localizations": {
         "tr": {
@@ -460,6 +490,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Oturum açılınca başlat"
+          }
+        }
+      }
+    },
+    "Leave windows alone": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pencerelere dokunma"
           }
         }
       }
@@ -580,6 +620,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Henüz kural yok"
+          }
+        }
+      }
+    },
+    "No zones: windows are left alone on this screen.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bölge yok: bu ekranda pencerelere dokunulmaz."
           }
         }
       }
@@ -717,6 +767,16 @@
         }
       }
     },
+    "Right": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sağ"
+          }
+        }
+      }
+    },
     "Right column (top to bottom)": {
       "localizations": {
         "tr": {
@@ -753,6 +813,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kurallar uygulama açıldığında, ekran değiştiğinde ve Şimdi yerleştir'e bastığında uygulanır. Kuralı olmayan uygulamalara dokunulmaz."
+          }
+        }
+      }
+    },
+    "Screen": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ekran"
           }
         }
       }
@@ -798,6 +868,16 @@
       }
     },
     "Zones": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bölgeler"
+          }
+        }
+      }
+    },
+    "Zones for": {
       "localizations": {
         "tr": {
           "stringUnit": {

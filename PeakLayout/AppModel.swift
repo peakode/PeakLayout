@@ -43,6 +43,10 @@ final class AppModel: ObservableObject {
 
     var activeMetrics: LayoutMetrics { activeProfile?.metrics ?? LayoutMetrics() }
 
+    /// Aktif ekranın bölgeleri; profil yoksa ya da bölge tanımlı değilse pencerelere dokunulmaz.
+    var activeZones: [WindowZone] { activeProfile?.windowZones ?? [] }
+    var activeWindowRules: [WindowRule] { activeProfile?.windowRules ?? [] }
+
     var engine: LayoutEngine? {
         screen.map { LayoutEngine(screenSize: $0.size, metrics: activeMetrics) }
     }
@@ -130,8 +134,8 @@ final class AppModel: ObservableObject {
 
     private func arrangeLaunchedApp(bundleID: String, attempt: Int = 0) {
         guard settings.windowZonesEnabled, attempt < 4,
-              let rule = settings.windowRules.first(where: { $0.bundleID == bundleID }),
-              let zone = settings.zones.first(where: { $0.id == rule.zoneID }),
+              let rule = activeWindowRules.first(where: { $0.bundleID == bundleID }),
+              let zone = activeZones.first(where: { $0.id == rule.zoneID }),
               let layout = zoneLayout else { return }
         let placed = WindowManager.runningApp(bundleID: bundleID).map {
             WindowManager.place(app: $0, in: layout.frame(for: zone))
@@ -155,7 +159,8 @@ final class AppModel: ObservableObject {
 
     /// Kurallı tüm uygulamaları bölgelerine yerleştirir.
     func arrangeWindows(reason: String) {
-        guard settings.windowZonesEnabled, !settings.windowRules.isEmpty else { return }
+        screen = ScreenInfo.main()
+        guard settings.windowZonesEnabled, !activeWindowRules.isEmpty, !activeZones.isEmpty else { return }
         guard WindowManager.isTrusted else {
             lastError = String(localized: "Accessibility permission is required to arrange windows. Turn on PeakLayout in System Settings › Privacy & Security › Accessibility.")
             return
@@ -164,8 +169,8 @@ final class AppModel: ObservableObject {
 
         var placed = 0
         var missing: [String] = []
-        for rule in settings.windowRules {
-            guard let zone = settings.zones.first(where: { $0.id == rule.zoneID }) else { continue }
+        for rule in activeWindowRules {
+            guard let zone = activeZones.first(where: { $0.id == rule.zoneID }) else { continue }
             guard let app = WindowManager.runningApp(bundleID: rule.bundleID) else { continue }
             let count = WindowManager.place(app: app, in: layout.frame(for: zone))
             if count == 0 { missing.append(rule.appName) } else { placed += count }

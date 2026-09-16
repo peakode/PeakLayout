@@ -5,6 +5,7 @@ struct SettingsView: View {
     @State private var selectedProfileID: DisplayProfile.ID?
     @State private var newPinnedName = ""
     @State private var newRuleApp = ""
+    @State private var windowProfileID: UUID?
 
     var body: some View {
         TabView {
@@ -203,6 +204,12 @@ struct SettingsView: View {
 // MARK: - Pencere bölgeleri sekmesi
 
 extension SettingsView {
+    /// Düzenlenen ekran profili; varsayılan olarak şu an bağlı olan ekran.
+    private var profileIndex: Int? {
+        let id = windowProfileID ?? model.activeProfile?.id
+        return model.settings.profiles.firstIndex { $0.id == id }
+    }
+
     var windowsTab: some View {
         HSplitView {
             Form {
@@ -227,16 +234,30 @@ extension SettingsView {
                     Text("Rules are applied when the app launches, when the display changes and when you press Arrange now. Apps without a rule are never moved.")
                 }
 
-                Section("Zones") {
-                    Stepper("\(model.settings.zones.count) equal columns", value: zoneCount, in: 2...4)
-                    ForEach(Array(model.settings.zones.enumerated()), id: \.element.id) { index, zone in
-                        HStack {
-                            TextField("", text: zoneTitle(index))
-                            Spacer()
-                            Text(verbatim: "\(zone.widthPercent)%")
-                                .monospacedDigit()
+                Section("Screen") {
+                    Picker("Zones for", selection: windowProfileBinding) {
+                        ForEach(model.settings.profiles) { profile in
+                            let active = profile.id == model.activeProfile?.id
+                            Text(verbatim: active ? "\(profile.title)  ● \(String(localized: "active"))" : profile.title)
+                                .tag(profile.id)
+                        }
+                    }
+                    if let index = profileIndex {
+                        let profile = model.settings.profiles[index]
+                        Stepper(zoneCountLabel, value: zoneCount, in: 0...4)
+                        ForEach(Array(profile.windowZones.enumerated()), id: \.element.id) { zoneIndex, zone in
+                            HStack {
+                                TextField("", text: zoneTitle(zoneIndex))
+                                Spacer()
+                                Text(verbatim: "\(zone.widthPercent)%")
+                                    .monospacedDigit()
+                                    .foregroundStyle(.secondary)
+                                Stepper("", value: zoneWidth(zoneIndex), in: 10...100, step: 5).labelsHidden()
+                            }
+                        }
+                        if profile.windowZones.isEmpty {
+                            Text("No zones: windows are left alone on this screen.")
                                 .foregroundStyle(.secondary)
-                            Stepper("", value: zoneWidth(index), in: 10...80, step: 5).labelsHidden()
                         }
                     }
                     HStack {
@@ -246,52 +267,59 @@ extension SettingsView {
                     }
                 }
 
-                Section {
-                    if model.settings.windowRules.isEmpty {
-                        Text("No rules yet").foregroundStyle(.secondary)
-                    }
-                    ForEach(Array(model.settings.windowRules.enumerated()), id: \.element.id) { index, rule in
+                if let index = profileIndex, !model.settings.profiles[index].windowZones.isEmpty {
+                    Section {
+                        if model.settings.profiles[index].windowRules.isEmpty {
+                            Text("No rules yet").foregroundStyle(.secondary)
+                        }
+                        ForEach(Array(model.settings.profiles[index].windowRules.enumerated()), id: \.element.id) { ruleIndex, rule in
+                            HStack {
+                                Text(verbatim: rule.appName)
+                                Spacer()
+                                Picker("", selection: ruleZone(ruleIndex)) {
+                                    ForEach(model.settings.profiles[index].windowZones) { zone in
+                                        Text(verbatim: zone.title).tag(zone.id)
+                                    }
+                                }
+                                .labelsHidden()
+                                .frame(width: 130)
+                                Button {
+                                    model.settings.profiles[index].windowRules.remove(at: ruleIndex)
+                                } label: {
+                                    Image(systemName: "minus.circle")
+                                }
+                                .buttonStyle(.borderless)
+                            }
+                        }
                         HStack {
-                            Text(verbatim: rule.appName)
-                            Spacer()
-                            Picker("", selection: ruleZone(index)) {
-                                ForEach(model.settings.zones) { zone in
-                                    Text(verbatim: zone.title).tag(zone.id)
+                            Picker("Add app", selection: $newRuleApp) {
+                                Text("Choose a running app…").tag("")
+                                ForEach(addableApps, id: \.bundleID) { app in
+                                    Text(verbatim: app.name).tag(app.bundleID)
                                 }
                             }
-                            .labelsHidden()
-                            .frame(width: 130)
-                            Button {
-                                model.settings.windowRules.remove(at: index)
-                            } label: {
-                                Image(systemName: "minus.circle")
-                            }
-                            .buttonStyle(.borderless)
+                            Button("Add") { addRule() }.disabled(newRuleApp.isEmpty)
                         }
+                        Button("Copy rules from the active screen") { copyRulesFromActiveScreen() }
+                            .disabled(model.activeProfile == nil || model.activeProfile?.id == model.settings.profiles[index].id)
+                    } header: {
+                        Text("App rules")
                     }
-                    HStack {
-                        Picker("Add app", selection: $newRuleApp) {
-                            Text("Choose a running app…").tag("")
-                            ForEach(addableApps, id: \.bundleID) { app in
-                                Text(verbatim: app.name).tag(app.bundleID)
-                            }
-                        }
-                        Button("Add") { addRule() }.disabled(newRuleApp.isEmpty)
-                    }
-                } header: {
-                    Text("App rules")
                 }
             }
             .formStyle(.grouped)
             .frame(minWidth: 380, idealWidth: 420)
 
             VStack(alignment: .leading, spacing: 8) {
-                ZonePreview(zones: model.settings.zones, rules: model.settings.windowRules)
-                    .frame(maxHeight: 260)
-                if let screen = model.screen, let layout = model.zoneLayout {
-                    Text(verbatim: screen.resolutionText + " · " + model.settings.zones
-                        .map { "\(Int(layout.frame(for: $0).width)) pt" }
-                        .joined(separator: " + "))
+                if let index = profileIndex {
+                    let profile = model.settings.profiles[index]
+                    ZonePreview(zones: profile.windowZones, rules: profile.windowRules)
+                        .frame(maxHeight: 260)
+                    let widths = profile.windowZones.map { zone in
+                        Int((Double(profile.width) * (zone.end - zone.start) - model.settings.windowGap).rounded())
+                    }
+                    Text(verbatim: "\(profile.width)×\(profile.height) · "
+                         + (widths.isEmpty ? "—" : widths.map { "\($0) pt" }.joined(separator: " + ")))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -304,60 +332,85 @@ extension SettingsView {
 
     // MARK: Bağlamalar
 
+    private var windowProfileBinding: Binding<UUID?> {
+        Binding(get: { windowProfileID ?? model.activeProfile?.id ?? model.settings.profiles.first?.id },
+                set: { windowProfileID = $0 })
+    }
+
+    private var zoneCountLabel: String {
+        let count = profileIndex.map { model.settings.profiles[$0].windowZones.count } ?? 0
+        switch count {
+        case 0: return String(localized: "Leave windows alone")
+        case 1: return String(localized: "1 full-screen zone")
+        default: return String(localized: "\(count) equal columns")
+        }
+    }
+
     private var zoneCount: Binding<Int> {
         Binding(
-            get: { model.settings.zones.count },
+            get: { profileIndex.map { model.settings.profiles[$0].windowZones.count } ?? 0 },
             set: { count in
-                let titles = (0..<count).map { index in
-                    index < model.settings.zones.count ? model.settings.zones[index].title : "\(index + 1)"
+                guard let index = profileIndex else { return }
+                let existing = model.settings.profiles[index].windowZones
+                guard count > 0 else {
+                    model.settings.profiles[index].windowZones = []
+                    model.settings.profiles[index].windowRules = []
+                    return
                 }
-                let ids = model.settings.zones.map(\.id)
+                let defaults = [String(localized: "Left"), String(localized: "Center"), String(localized: "Right")]
+                let titles = (0..<count).map { position -> String in
+                    if position < existing.count { return existing[position].title }
+                    if count == 1 { return String(localized: "Full screen") }
+                    return position < defaults.count ? defaults[position] : "\(position + 1)"
+                }
                 var zones = WindowZone.equalColumns(titles)
-                for i in zones.indices where i < ids.count { zones[i].id = ids[i] }
-                model.settings.zones = zones
-                model.settings.windowRules.removeAll { rule in !zones.contains { $0.id == rule.zoneID } }
+                for position in zones.indices where position < existing.count { zones[position].id = existing[position].id }
+                model.settings.profiles[index].windowZones = zones
+                // Bölgesi kalmayan kurallar sonuncuya kaydırılır.
+                for ruleIndex in model.settings.profiles[index].windowRules.indices {
+                    let zoneID = model.settings.profiles[index].windowRules[ruleIndex].zoneID
+                    if !zones.contains(where: { $0.id == zoneID }), let last = zones.last {
+                        model.settings.profiles[index].windowRules[ruleIndex].zoneID = last.id
+                    }
+                }
             }
         )
     }
 
-    private func zoneTitle(_ index: Int) -> Binding<String> {
-        Binding(get: { model.settings.zones[index].title },
-                set: { model.settings.zones[index].title = $0 })
+    private func zoneTitle(_ zoneIndex: Int) -> Binding<String> {
+        Binding(get: { profileIndex.map { model.settings.profiles[$0].windowZones[zoneIndex].title } ?? "" },
+                set: { if let index = profileIndex { model.settings.profiles[index].windowZones[zoneIndex].title = $0 } })
     }
 
     /// Bir bölgenin genişliğini değiştirir; farkı komşusundan alır, toplam hep %100 kalır.
-    private func zoneWidth(_ index: Int) -> Binding<Int> {
+    private func zoneWidth(_ zoneIndex: Int) -> Binding<Int> {
         Binding(
-            get: { model.settings.zones[index].widthPercent },
+            get: { profileIndex.map { model.settings.profiles[$0].windowZones[zoneIndex].widthPercent } ?? 100 },
             set: { percent in
-                var zones = model.settings.zones
-                let neighbour = index == zones.count - 1 ? index - 1 : index + 1
-                guard zones.indices.contains(neighbour) else { return }
-                let delta = Double(percent) / 100 - (zones[index].end - zones[index].start)
-                let neighbourWidth = zones[neighbour].end - zones[neighbour].start
-                guard neighbourWidth - delta >= 0.1 else { return }
-                zones[index].end += delta
-                if neighbour > index {
-                    zones[neighbour].start += delta
+                guard let index = profileIndex else { return }
+                var zones = model.settings.profiles[index].windowZones
+                guard zones.count > 1 else { return }
+                let neighbour = zoneIndex == zones.count - 1 ? zoneIndex - 1 : zoneIndex + 1
+                let delta = Double(percent) / 100 - (zones[zoneIndex].end - zones[zoneIndex].start)
+                guard (zones[neighbour].end - zones[neighbour].start) - delta >= 0.1 else { return }
+                if neighbour > zoneIndex {
+                    zones[zoneIndex].end += delta
                 } else {
-                    zones[index].start += delta
-                    zones[index].end -= delta
-                    zones[neighbour].end += delta
+                    zones[zoneIndex].start -= delta
                 }
-                // Sınırları yeniden zincirle: her bölge bir öncekinin bittiği yerden başlar.
-                for i in zones.indices.dropFirst() { zones[i].start = zones[i - 1].end }
-                model.settings.zones = zones
+                for position in zones.indices.dropFirst() { zones[position].start = zones[position - 1].end }
+                model.settings.profiles[index].windowZones = zones
             }
         )
     }
 
-    private func ruleZone(_ index: Int) -> Binding<UUID> {
-        Binding(get: { model.settings.windowRules[index].zoneID },
-                set: { model.settings.windowRules[index].zoneID = $0 })
+    private func ruleZone(_ ruleIndex: Int) -> Binding<UUID> {
+        Binding(get: { profileIndex.map { model.settings.profiles[$0].windowRules[ruleIndex].zoneID } ?? UUID() },
+                set: { if let index = profileIndex { model.settings.profiles[index].windowRules[ruleIndex].zoneID = $0 } })
     }
 
     var addableApps: [(bundleID: String, name: String)] {
-        let used = Set(model.settings.windowRules.map(\.bundleID))
+        let used = Set(profileIndex.map { model.settings.profiles[$0].windowRules.map(\.bundleID) } ?? [])
         return NSWorkspace.shared.runningApplications
             .filter { $0.activationPolicy == .regular }
             .compactMap { app in
@@ -368,13 +421,28 @@ extension SettingsView {
             .sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
     }
 
-    /// Yeni kural varsayılan olarak ortadaki bölgeye düşer.
+    /// Yeni kural ortadaki bölgeye düşer.
     private func addRule() {
-        guard let app = addableApps.first(where: { $0.bundleID == newRuleApp }),
-              !model.settings.zones.isEmpty else { return }
-        let middle = model.settings.zones[model.settings.zones.count / 2]
-        model.settings.windowRules.append(WindowRule(bundleID: app.bundleID, appName: app.name, zoneID: middle.id))
+        guard let index = profileIndex, let app = addableApps.first(where: { $0.bundleID == newRuleApp }) else { return }
+        let zones = model.settings.profiles[index].windowZones
+        guard !zones.isEmpty else { return }
+        let middle = zones[zones.count / 2]
+        model.settings.profiles[index].windowRules.append(
+            WindowRule(bundleID: app.bundleID, appName: app.name, zoneID: middle.id)
+        )
         newRuleApp = ""
+    }
+
+    /// Aktif ekranın kurallarını bu profile kopyalar; bölge sırası korunur.
+    private func copyRulesFromActiveScreen() {
+        guard let index = profileIndex, let source = model.activeProfile else { return }
+        let zones = model.settings.profiles[index].windowZones
+        guard !zones.isEmpty else { return }
+        model.settings.profiles[index].windowRules = source.windowRules.map { rule in
+            let position = source.windowZones.firstIndex { $0.id == rule.zoneID } ?? 0
+            return WindowRule(bundleID: rule.bundleID, appName: rule.appName,
+                              zoneID: zones[min(position, zones.count - 1)].id)
+        }
     }
 }
 

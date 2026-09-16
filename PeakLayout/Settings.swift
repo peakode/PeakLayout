@@ -11,6 +11,10 @@ struct DisplayProfile: Codable, Identifiable, Equatable {
     /// MacBook'un kendi ekranı (ad dile göre değiştiği için ayrı bayrak).
     var builtIn = false
     var metrics = LayoutMetrics()
+    /// Bu ekrandaki pencere bölgeleri. Boşsa bu ekranda pencerelere dokunulmaz.
+    var windowZones: [WindowZone] = []
+    /// Bu ekranda hangi uygulamanın hangi bölgeye gideceği.
+    var windowRules: [WindowRule] = []
 
     func matches(_ screen: ScreenInfo) -> Bool {
         if builtIn { return screen.isBuiltIn }
@@ -36,10 +40,8 @@ struct AppSettings: Codable, Equatable {
     var assignments = SlotAssignments()
     /// İlk açılışta "oturum açılınca başlat" bir kez otomatik açılır; sonra kullanıcının seçimi korunur.
     var loginItemConfigured = false
-    /// Pencere bölgeleri (ekranı dikey dilimlere böler) ve uygulama kuralları.
+    /// Pencere bölgeleri (ekranı dikey dilimlere böler); bölgeler ekran profiline aittir.
     var windowZonesEnabled = false
-    var zones: [WindowZone] = WindowZone.defaults
-    var windowRules: [WindowRule] = []
     /// Pencereler arası boşluk (point).
     var windowGap: Double = 0
 
@@ -59,8 +61,6 @@ struct AppSettings: Codable, Equatable {
         assignments = try c.decodeIfPresent(SlotAssignments.self, forKey: .assignments) ?? d.assignments
         loginItemConfigured = try c.decodeIfPresent(Bool.self, forKey: .loginItemConfigured) ?? false
         windowZonesEnabled = try c.decodeIfPresent(Bool.self, forKey: .windowZonesEnabled) ?? d.windowZonesEnabled
-        zones = try c.decodeIfPresent([WindowZone].self, forKey: .zones) ?? d.zones
-        windowRules = try c.decodeIfPresent([WindowRule].self, forKey: .windowRules) ?? d.windowRules
         windowGap = try c.decodeIfPresent(Double.self, forKey: .windowGap) ?? d.windowGap
     }
 
