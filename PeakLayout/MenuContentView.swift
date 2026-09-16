@@ -57,6 +57,9 @@ struct MenuContentView: View {
                     .keyboardShortcut(.defaultAction)
                 Button("Close gaps") { model.compactSlots() }
             }
+            if model.settings.windowZonesEnabled {
+                Button("Arrange windows") { model.arrangeWindows(reason: String(localized: "Manual")) }
+            }
             Toggle("Pause", isOn: $model.isPaused)
                 .onChange(of: model.isPaused) { _, paused in
                     if !paused { model.applyLayout(reason: String(localized: "Resumed")) }

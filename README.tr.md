@@ -34,9 +34,31 @@ aynı görünür; geniş ekranda sadece dosyalara daha çok yer kalır.
 İnmesi biten her dosya `~/Downloads`'tan masaüstüne taşınır ve sıradaki boş yere konur. Mevcut dosyalar
 yerinden oynamaz, en yeni dosya her zaman en sondadır.
 
-**4. Yanlışlıkla kaydırma ve "Düzenle".**
+**4. Tek ekran, üç çalışma alanı.**
+49" geniş monitörde üç ayrı monitör varmış gibi çalışırsın: solda sohbet, ortada tarayıcı, sağda posta.
+Bu uygulamaları açtığında her pencere kendi sütununa kendiliğinden gider; yeniden başlatmadan sonra da,
+monitörü çıkarıp taktıktan sonra da.
+
+**5. Yanlışlıkla kaydırma ve "Düzenle".**
 Bir klasörü kaydırdın ya da Finder masaüstünü yeniden sıraladı. Sabit klasörler 20 saniye içinde yerine
 döner. Her yerleşimden önce eski konumlar yedeklenir, tek tıkla geri alabilirsin.
+
+## Pencere bölgeleri
+
+PeakLayout ekranı dikey bölgelere de böler ve her uygulamayı kendi bölgesine yollar. 49" geniş
+monitörde bu üç eşit sütun demek: solda sohbet, ortada tarayıcı, sağda posta. Her sabah elle
+sürüklemek yerine kendiliğinden yerine gelir.
+
+- **Bölgeler:** 2–4 sütun, varsayılan olarak eşit; genişlikleri değiştirilebilir, araya boşluk
+  konabilir. Menü çubuğu ve Dock hariç tutulur, pencereler tam oturur.
+- **Kurallar:** uygulama başına bir bölge, uygulama kimliğiyle eşleşir. Kuralı olmayan uygulamalara
+  dokunulmaz.
+- **Ne zaman uygulanır:** kurallı uygulama açıldığında, ekran değiştiğinde, PeakLayout başladığında ve
+  menüdeki *Pencereleri düzenle* ile.
+- **Atlananlar:** küçültülmüş ve tam ekran pencereler, bir de boyut değiştirmeyi kabul etmeyen
+  pencereler (bazı uygulamaların pencere boyutu sabittir). Bunlar zorlanmaz, bildirilir.
+
+*Ayarlar › Pencereler*'den açılır. Erişilebilirlik izni gerekir, aşağıda anlatılıyor.
 
 ## Yerleşim nasıl çalışır
 
@@ -79,6 +101,7 @@ Kaydı ya da Tam Disk Erişimi istemez.
 | **Otomasyon › Finder** | *"PeakLayout", "Finder"ı denetlemek istiyor* | Masaüstü ikonlarının konumları Finder'a aittir. PeakLayout her ikonun konumunu Finder'ın AppleScript arayüzüyle okur ve taşır. Bu izin olmadan hiçbir şey yerleştirilemez. |
 | **Masaüstü klasörü** | *"PeakLayout" Masaüstü klasörünüzdeki dosyalara erişmek istiyor* | Dosya eklendiğini, adı değiştiğini ya da silindiğini fark edip yeni öğeyi sıradaki boş yere koymak için. Sadece dosya adları ve tarihleri okunur, dosyaların içeriği açılmaz. |
 | **Downloads klasörü** | *"PeakLayout" İndirilenler klasörünüzdeki dosyalara erişmek istiyor* | İnmesi biten dosyaları masaüstüne taşımak için. Sadece *Downloads'a gelenleri masaüstüne taşı* açıksa istenir; kapatınca Downloads'a hiç erişilmez. |
+| **Erişilebilirlik** | *"PeakLayout" bilgisayarı erişilebilirlik özellikleriyle denetlemek istiyor* | Sadece pencere bölgeleri için. macOS pencere konum ve boyutunu Erişilebilirlik API'siyle açar; pencere taşıyan her uygulamanın tek yolu budur. PeakLayout sadece kural yazdığın uygulamaların pencere konum ve boyutunu okur ve yazar, başka bir şey yapmaz. Pencere bölgeleri kapalıysa hiç istenmez. |
 | **Oturum açma öğesi** | Bildirim: *"PeakLayout" bir oturum açma öğesi ekledi* | Bilgisayar yeniden başladığında uygulamayı elle açmadan düzenin geri gelmesi için. Ayarlar'dan ya da *Sistem Ayarları › Genel › Oturum Açma Öğeleri*'nden kapatılabilir. |
 
 Uygulama sandbox'lı değildir, çünkü sandbox içindeki bir uygulama Finder'a Apple Event gönderemez. Bu

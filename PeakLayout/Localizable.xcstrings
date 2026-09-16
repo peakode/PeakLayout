@@ -4,12 +4,32 @@
     "": {
       "shouldTranslate": false
     },
+    "%@ → %@": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ → %2$@"
+          }
+        }
+      }
+    },
     "%@: %lld items placed": {
       "localizations": {
         "tr": {
           "stringUnit": {
             "state": "translated",
             "value": "%1$@: %2$lld öğe yerleştirildi"
+          }
+        }
+      }
+    },
+    "%@: %lld windows arranged": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@: %2$lld pencere yerleştirildi"
           }
         }
       }
@@ -24,12 +44,32 @@
         }
       }
     },
+    "%lld equal columns": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld eşit sütun"
+          }
+        }
+      }
+    },
     "%lld files didn't fit on screen": {
       "localizations": {
         "tr": {
           "stringUnit": {
             "state": "translated",
             "value": "%lld dosya ekrana sığmadı"
+          }
+        }
+      }
+    },
+    "%lld pt": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld pt"
           }
         }
       }
@@ -44,6 +84,26 @@
         }
       }
     },
+    "Accessibility permission is required to arrange windows. Turn on PeakLayout in System Settings › Privacy & Security › Accessibility.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pencereleri yerleştirmek için Erişilebilirlik izni gerekiyor. Sistem Ayarları › Gizlilik ve Güvenlik › Erişilebilirlik'ten PeakLayout'u aç."
+          }
+        }
+      }
+    },
+    "Accessibility permission missing": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erişilebilirlik izni yok"
+          }
+        }
+      }
+    },
     "Add": {
       "localizations": {
         "tr": {
@@ -54,12 +114,62 @@
         }
       }
     },
+    "Add app": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uygulama ekle"
+          }
+        }
+      }
+    },
+    "App rules": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uygulama kuralları"
+          }
+        }
+      }
+    },
     "Apply now": {
       "localizations": {
         "tr": {
           "stringUnit": {
             "state": "translated",
             "value": "Şimdi uygula"
+          }
+        }
+      }
+    },
+    "Arrange now": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Şimdi yerleştir"
+          }
+        }
+      }
+    },
+    "Arrange windows": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pencereleri düzenle"
+          }
+        }
+      }
+    },
+    "Arrange windows in zones": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pencereleri bölgelere yerleştir"
           }
         }
       }
@@ -114,6 +224,26 @@
         }
       }
     },
+    "Center": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Orta"
+          }
+        }
+      }
+    },
+    "Choose a running app…": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Açık uygulamalardan seç…"
+          }
+        }
+      }
+    },
     "Choose from desktop…": {
       "localizations": {
         "tr": {
@@ -140,6 +270,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Sütun aralığı"
+          }
+        }
+      }
+    },
+    "Could not arrange: %@": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yerleştirilemedi: %@"
           }
         }
       }
@@ -180,6 +320,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Her yerleşimden önce Finder'daki mevcut konumlar kaydedilir (son 20)."
+          }
+        }
+      }
+    },
+    "Desktop": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Masaüstü"
           }
         }
       }
@@ -254,6 +404,16 @@
         }
       }
     },
+    "Gap between windows": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pencereler arası boşluk"
+          }
+        }
+      }
+    },
     "Gap columns": {
       "localizations": {
         "tr": {
@@ -300,6 +460,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Oturum açılınca başlat"
+          }
+        }
+      }
+    },
+    "Left": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sol"
           }
         }
       }
@@ -404,6 +574,16 @@
         }
       }
     },
+    "No rules yet": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Henüz kural yok"
+          }
+        }
+      }
+    },
     "Not found on desktop": {
       "localizations": {
         "tr": {
@@ -420,6 +600,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Yedek klasörünü aç"
+          }
+        }
+      }
+    },
+    "Open settings": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ayarları aç"
           }
         }
       }
@@ -557,6 +747,16 @@
         }
       }
     },
+    "Rules are applied when the app launches, when the display changes and when you press Arrange now. Apps without a rule are never moved.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kurallar uygulama açıldığında, ekran değiştiğinde ve Şimdi yerleştir'e bastığında uygulanır. Kuralı olmayan uygulamalara dokunulmaz."
+          }
+        }
+      }
+    },
     "Settings…": {
       "localizations": {
         "tr": {
@@ -573,6 +773,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "Başlangıç"
+          }
+        }
+      }
+    },
+    "Window zones": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pencere bölgeleri"
+          }
+        }
+      }
+    },
+    "Windows": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pencereler"
+          }
+        }
+      }
+    },
+    "Zones": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bölgeler"
           }
         }
       }

@@ -36,6 +36,12 @@ struct AppSettings: Codable, Equatable {
     var assignments = SlotAssignments()
     /// İlk açılışta "oturum açılınca başlat" bir kez otomatik açılır; sonra kullanıcının seçimi korunur.
     var loginItemConfigured = false
+    /// Pencere bölgeleri (ekranı dikey dilimlere böler) ve uygulama kuralları.
+    var windowZonesEnabled = false
+    var zones: [WindowZone] = WindowZone.defaults
+    var windowRules: [WindowRule] = []
+    /// Pencereler arası boşluk (point).
+    var windowGap: Double = 0
 
     private static let key = "AppSettings.v1"
 
@@ -52,6 +58,10 @@ struct AppSettings: Codable, Equatable {
         downloadsBaseline = try c.decodeIfPresent(Date.self, forKey: .downloadsBaseline) ?? d.downloadsBaseline
         assignments = try c.decodeIfPresent(SlotAssignments.self, forKey: .assignments) ?? d.assignments
         loginItemConfigured = try c.decodeIfPresent(Bool.self, forKey: .loginItemConfigured) ?? false
+        windowZonesEnabled = try c.decodeIfPresent(Bool.self, forKey: .windowZonesEnabled) ?? d.windowZonesEnabled
+        zones = try c.decodeIfPresent([WindowZone].self, forKey: .zones) ?? d.zones
+        windowRules = try c.decodeIfPresent([WindowRule].self, forKey: .windowRules) ?? d.windowRules
+        windowGap = try c.decodeIfPresent(Double.self, forKey: .windowGap) ?? d.windowGap
     }
 
     static func load() -> AppSettings {

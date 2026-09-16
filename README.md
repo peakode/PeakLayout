@@ -34,9 +34,30 @@ pinned column looks identical on both. The wider screen simply has more room for
 Every finished download is moved from `~/Downloads` to the desktop and placed in the next free slot.
 Files you already have don't move, so you always know where the newest one is: at the end.
 
-**4. Accidental drags and "Clean Up".**
+**4. One screen, three workspaces.**
+On a 49" ultrawide you work as if you had three monitors: chat left, browser centre, mail right. Open
+those apps and each window goes to its own column by itself — after a restart, after unplugging, after
+anything.
+
+**5. Accidental drags and "Clean Up".**
 You nudge a folder or Finder re-sorts the desktop. Pinned folders snap back within 20 seconds. Every
 layout pass saves a backup of the previous positions, so you can undo with one click.
+
+## Window zones
+
+PeakLayout also splits the screen into vertical zones and sends each app to its own zone. On a 49"
+ultrawide that means three equal columns — chat on the left, browser in the middle, mail on the right —
+restored automatically instead of dragged into place every morning.
+
+- **Zones:** 2 to 4 columns, equal by default, with adjustable widths and an optional gap. The menu bar
+  and the Dock are excluded, so windows fit exactly.
+- **Rules:** one zone per app, matched by bundle identifier. Apps without a rule are never touched.
+- **Applied:** when a rule's app launches, when the display changes, when PeakLayout starts, and from
+  *Arrange windows* in the menu.
+- **Skipped:** minimized and full-screen windows, and windows that refuse to resize (some apps have a
+  fixed size). These are reported rather than forced.
+
+Turn it on in *Settings › Windows*. It needs the Accessibility permission — see below.
 
 ## How the layout works
 
@@ -79,6 +100,7 @@ Accessibility, Screen Recording or Full Disk Access.
 | **Automation › Finder** | *"PeakLayout" wants access to control "Finder"* | Desktop icon positions belong to Finder. PeakLayout reads each icon's position and moves icons through Finder's AppleScript interface. Without it, nothing can be arranged. |
 | **Desktop folder** | *"PeakLayout" would like to access files in your Desktop folder* | To notice when files are added, renamed or removed so new items get the next free slot. Only file names and dates are read; file contents are never opened. |
 | **Downloads folder** | *"PeakLayout" would like to access files in your Downloads folder* | To move finished downloads to the desktop. Only asked if *Move new downloads to the desktop* is on; turning it off stops all access to Downloads. |
+| **Accessibility** | *"PeakLayout" would like to control this computer using accessibility features* | Only for window zones. macOS exposes window position and size through the Accessibility API; this is the only way any window manager can move a window. PeakLayout reads and sets position and size for the apps you wrote a rule for, and nothing else. Not asked at all if window zones stay off. |
 | **Login item** | Notification: *"PeakLayout" added a login item* | So the layout is restored after a restart without launching the app by hand. Turn it off in Settings or in *System Settings › General › Login Items*. |
 
 The app is not sandboxed because a sandboxed app can't send Apple Events to Finder. You can review or

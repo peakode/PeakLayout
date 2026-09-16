@@ -27,6 +27,7 @@ final class AppModel: ObservableObject {
     private var displayMonitor: DisplayMonitor?
     private var guardTimer: Timer?
     private var lastFileSystemNames: Set<String> = []
+    private var launchObserver: NSObjectProtocol?
     private var retryCount = 0
     private var isApplying = false
 
@@ -53,12 +54,18 @@ final class AppModel: ObservableObject {
         watcher.start()
         desktopWatcher = watcher
 
-        let monitor = DisplayMonitor { [weak self] in self?.applyLayout(reason: String(localized: "Display changed")) }
+        let monitor = DisplayMonitor { [weak self] in
+            self?.applyLayout(reason: String(localized: "Display changed"))
+            self?.arrangeWindows(reason: String(localized: "Display changed"))
+        }
         monitor.start()
         displayMonitor = monitor
 
         updateDownloadsMover()
         updateGuardTimer()
+        updateLaunchObserver()
+        // İzin yoksa macOS'un kendi penceresini ilk açılışta göster.
+        if settings.windowZonesEnabled, !WindowManager.isTrusted { WindowManager.requestPermission() }
 
         if !settings.loginItemConfigured {
             launchAtLogin = true
@@ -68,6 +75,7 @@ final class AppModel: ObservableObject {
 
         lastFileSystemNames = DesktopScanner.fileSystemNames()
         applyLayout(reason: String(localized: "Startup"))
+        arrangeWindows(reason: String(localized: "Startup"))
     }
 
     func updateDownloadsMover() {
@@ -100,6 +108,71 @@ final class AppModel: ObservableObject {
         guard names != lastFileSystemNames else { return }
         lastFileSystemNames = names
         applyLayout(reason: String(localized: "Desktop changed"))
+    }
+
+    // MARK: - Pencere bölgeleri
+
+    /// Kurallı bir uygulama açıldığında penceresi hazır olana kadar birkaç kez denenir.
+    func updateLaunchObserver() {
+        if let launchObserver {
+            NSWorkspace.shared.notificationCenter.removeObserver(launchObserver)
+            self.launchObserver = nil
+        }
+        guard settings.windowZonesEnabled else { return }
+        launchObserver = NSWorkspace.shared.notificationCenter.addObserver(
+            forName: NSWorkspace.didLaunchApplicationNotification, object: nil, queue: .main
+        ) { [weak self] note in
+            guard let app = note.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication,
+                  let bundleID = app.bundleIdentifier else { return }
+            MainActor.assumeIsolated { self?.arrangeLaunchedApp(bundleID: bundleID) }
+        }
+    }
+
+    private func arrangeLaunchedApp(bundleID: String, attempt: Int = 0) {
+        guard settings.windowZonesEnabled, attempt < 4,
+              let rule = settings.windowRules.first(where: { $0.bundleID == bundleID }),
+              let zone = settings.zones.first(where: { $0.id == rule.zoneID }),
+              let layout = zoneLayout else { return }
+        let placed = WindowManager.runningApp(bundleID: bundleID).map {
+            WindowManager.place(app: $0, in: layout.frame(for: zone))
+        } ?? 0
+        if placed > 0 {
+            statusMessage = String(localized: "\(rule.appName) → \(zone.title)")
+            return
+        }
+        // Pencere henüz açılmamış olabilir: 1, 2.5 ve 5 sn sonra tekrar dene.
+        let delays = [1.0, 1.5, 2.5]
+        DispatchQueue.main.asyncAfter(deadline: .now() + delays[min(attempt, delays.count - 1)]) { [weak self] in
+            self?.arrangeLaunchedApp(bundleID: bundleID, attempt: attempt + 1)
+        }
+    }
+
+    var zoneLayout: ZoneLayout? {
+        NSScreen.screens.first.map { ZoneLayout(screen: $0, gap: settings.windowGap) }
+    }
+
+    var accessibilityGranted: Bool { WindowManager.isTrusted }
+
+    /// Kurallı tüm uygulamaları bölgelerine yerleştirir.
+    func arrangeWindows(reason: String) {
+        guard settings.windowZonesEnabled, !settings.windowRules.isEmpty else { return }
+        guard WindowManager.isTrusted else {
+            lastError = String(localized: "Accessibility permission is required to arrange windows. Turn on PeakLayout in System Settings › Privacy & Security › Accessibility.")
+            return
+        }
+        guard let layout = zoneLayout else { return }
+
+        var placed = 0
+        var missing: [String] = []
+        for rule in settings.windowRules {
+            guard let zone = settings.zones.first(where: { $0.id == rule.zoneID }) else { continue }
+            guard let app = WindowManager.runningApp(bundleID: rule.bundleID) else { continue }
+            let count = WindowManager.place(app: app, in: layout.frame(for: zone))
+            if count == 0 { missing.append(rule.appName) } else { placed += count }
+        }
+        lastError = missing.isEmpty ? nil
+            : String(localized: "Could not arrange: \(missing.joined(separator: ", "))")
+        statusMessage = String(localized: "\(reason): \(placed) windows arranged")
     }
 
     // MARK: - Yerleşim
