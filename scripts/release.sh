@@ -5,6 +5,8 @@
 #   scripts/release.sh --publish   → also creates GitHub release v<version> with the DMG
 #   scripts/release.sh --publish-only → publishes the DMG already in dist/ without rebuilding
 #
+# RELEASE_NOTES=path/to/notes.md prepends a "what's new" section to the release notes.
+#
 # Signing:
 #   - If a "Developer ID Application" certificate is in the keychain, the app and DMG are signed with it.
 #   - If NOTARY_PROFILE (default: PeakLayout-notary) exists, both are notarized and stapled,
@@ -91,7 +93,9 @@ if $PUBLISH; then
     GATEKEEPER_EN="Not notarized yet: on first launch macOS blocks the app. Open **System Settings › Privacy & Security** and click **Open Anyway** (once)."
     GATEKEEPER_TR="Henüz Apple onaylı (notarized) değil: ilk açılışta macOS uygulamayı engeller. **Sistem Ayarları › Gizlilik ve Güvenlik**'te **Yine de Aç**'a bas (bir kez)."
   fi
-  cat > "$NOTES" <<EOF
+  # RELEASE_NOTES varsa (yenilikler listesi) sürüm notlarının başına eklenir.
+  [[ -n "${RELEASE_NOTES:-}" && -f "${RELEASE_NOTES}" ]] && cat "$RELEASE_NOTES" >> "$NOTES"
+  cat >> "$NOTES" <<EOF
 ### Install
 1. Download **PeakLayout-$VERSION.dmg**, open it and drag **PeakLayout** onto **Applications**.
 2. Launch PeakLayout from Applications. $GATEKEEPER_EN
