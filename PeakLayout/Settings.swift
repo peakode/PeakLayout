@@ -16,6 +16,14 @@ struct DisplayProfile: Codable, Identifiable, Equatable {
     /// Bu ekranda hangi uygulamanın hangi bölgeye gideceği.
     var windowRules: [WindowRule] = []
 
+    /// Varsayılan profil adı uygulamanın dilinde gösterilir; diğer adlar olduğu gibi kalır.
+    var displayTitle: String {
+        switch title {
+        case "MacBook built-in display", "MacBook dahili ekran": return String(localized: "MacBook built-in display")
+        default: return title
+        }
+    }
+
     func matches(_ screen: ScreenInfo) -> Bool {
         if builtIn { return screen.isBuiltIn }
         if !nameMatch.isEmpty { return screen.name.localizedCaseInsensitiveContains(nameMatch) }
@@ -25,7 +33,7 @@ struct DisplayProfile: Codable, Identifiable, Equatable {
     static let defaults: [DisplayProfile] = [
         DisplayProfile(title: "Samsung Odyssey 49\"", nameMatch: "Odyssey G9", width: 5120, height: 1440),
         DisplayProfile(title: "Samsung 27\"", nameMatch: "", width: 2560, height: 1440),
-        DisplayProfile(title: String(localized: "MacBook built-in display"), nameMatch: "", width: 1512, height: 982, builtIn: true),
+        DisplayProfile(title: "MacBook built-in display", nameMatch: "", width: 1512, height: 982, builtIn: true),
     ]
 }
 

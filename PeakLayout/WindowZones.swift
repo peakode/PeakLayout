@@ -10,6 +10,18 @@ struct WindowZone: Codable, Identifiable, Equatable {
 
     var widthPercent: Int { Int(((end - start) * 100).rounded()) }
 
+    /// Varsayılan bölge adları uygulamanın dilinde gösterilir; kullanıcının verdiği adlar olduğu gibi kalır.
+    /// Eski sürümlerin Türkçe kaydettiği adlar da tanınır.
+    var displayTitle: String {
+        switch title {
+        case "Left", "Sol": return String(localized: "Left")
+        case "Center", "Orta": return String(localized: "Center")
+        case "Right", "Sağ": return String(localized: "Right")
+        case "Full screen", "Tam ekran": return String(localized: "Full screen")
+        default: return title
+        }
+    }
+
     static func equalColumns(_ titles: [String]) -> [WindowZone] {
         let step = 1.0 / Double(titles.count)
         return titles.enumerated().map { index, title in
@@ -17,9 +29,7 @@ struct WindowZone: Codable, Identifiable, Equatable {
         }
     }
 
-    static var defaults: [WindowZone] {
-        equalColumns([String(localized: "Left"), String(localized: "Center"), String(localized: "Right")])
-    }
+    static var defaults: [WindowZone] { equalColumns(["Left", "Center", "Right"]) }
 }
 
 /// "Şu uygulama şu bölgede açılsın" kuralı. Uygulama kimliğiyle eşleşir, adı değişse de bozulmaz.

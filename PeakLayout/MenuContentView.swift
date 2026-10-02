@@ -15,7 +15,7 @@ struct MenuContentView: View {
                 HStack(spacing: 6) {
                     Text(verbatim: model.screen?.resolutionText ?? "")
                     Text(verbatim: "·")
-                    if let title = model.activeProfile?.title {
+                    if let title = model.activeProfile?.displayTitle {
                         Text(verbatim: title)
                     } else {
                         Text("No profile (default metrics)")

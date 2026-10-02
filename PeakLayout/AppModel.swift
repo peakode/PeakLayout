@@ -178,7 +178,7 @@ final class AppModel: ObservableObject {
                   let rule = profile.windowRules.first(where: { $0.bundleID == bundleID }),
                   let zone = profile.windowZones.first(where: { $0.id == rule.zoneID }) else { return nil }
             let layout = ZoneLayout(screen: connected.screen, gap: settings.windowGap)
-            return ZoneTarget(screenRect: layout.screenRect, frame: layout.frame(for: zone), zoneTitle: zone.title)
+            return ZoneTarget(screenRect: layout.screenRect, frame: layout.frame(for: zone), zoneTitle: zone.displayTitle)
         }
     }
 

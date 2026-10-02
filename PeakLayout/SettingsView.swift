@@ -132,7 +132,7 @@ struct SettingsView: View {
             Picker("Display profile", selection: $selectedProfileID) {
                 ForEach(model.settings.profiles) { profile in
                     let active = profile.id == model.activeProfile?.id
-                    Text(verbatim: active ? "\(profile.title)  ● \(String(localized: "active"))" : profile.title).tag(Optional(profile.id))
+                    Text(verbatim: active ? "\(profile.displayTitle)  ● \(String(localized: "active"))" : profile.displayTitle).tag(Optional(profile.id))
                 }
             }
             Button("Measure from current positions") {
@@ -146,7 +146,9 @@ struct SettingsView: View {
     private func metricsEditor(_ profile: Binding<DisplayProfile>) -> some View {
         Grid(alignment: .leading, horizontalSpacing: 16, verticalSpacing: 6) {
             GridRow {
-                Text("Name"); TextField("", text: profile.title)
+                Text("Name")
+                TextField("", text: Binding(get: { profile.wrappedValue.displayTitle },
+                                            set: { profile.wrappedValue.title = $0 }))
             }
             GridRow {
                 Text("Display name contains"); TextField("empty = match by resolution", text: profile.nameMatch)
@@ -288,7 +290,7 @@ extension SettingsView {
                                 Spacer()
                                 Picker("", selection: ruleZone(rule.id)) {
                                     ForEach(profile.windowZones) { zone in
-                                        Text(verbatim: zone.title).tag(zone.id)
+                                        Text(verbatim: zone.displayTitle).tag(zone.id)
                                     }
                                 }
                                 .labelsHidden()
@@ -312,7 +314,7 @@ extension SettingsView {
                         }
                         Menu("Copy rules from another screen") {
                             ForEach(model.settings.profiles.filter { $0.id != profile.id && !$0.windowRules.isEmpty }) { source in
-                                Button(source.title) { copyRules(from: source) }
+                                Button(source.displayTitle) { copyRules(from: source) }
                             }
                         }
                     } header: {
@@ -346,10 +348,10 @@ extension SettingsView {
 
     /// Bağlı ekranlar "● bağlı", ana ekran ayrıca "ana" diye işaretlenir.
     private func profileLabel(_ profile: DisplayProfile) -> String {
-        guard model.connectedProfileIDs.contains(profile.id) else { return profile.title }
+        guard model.connectedProfileIDs.contains(profile.id) else { return profile.displayTitle }
         let isMain = profile.id == model.activeProfile?.id
         let tag = isMain ? String(localized: "connected, main") : String(localized: "connected")
-        return "\(profile.title)  ● \(tag)"
+        return "\(profile.displayTitle)  ● \(tag)"
     }
 
     private var windowProfileBinding: Binding<UUID?> {
@@ -375,9 +377,9 @@ extension SettingsView {
                         profile.windowRules = []
                         return
                     }
-                    let defaults = [String(localized: "Left"), String(localized: "Center"), String(localized: "Right")]
+                    let defaults = ["Left", "Center", "Right"]
                     let titles = (0..<count).map { position -> String in
-                        if count == 1 { return String(localized: "Full screen") }
+                        if count == 1 { return "Full screen" }
                         if position < existing.count, existing.count > 1 { return existing[position].title }
                         return position < defaults.count ? defaults[position] : "\(position + 1)"
                     }
@@ -398,7 +400,7 @@ extension SettingsView {
 
     private func zoneTitle(_ zoneID: UUID) -> Binding<String> {
         Binding(
-            get: { editedProfile?.windowZones.first { $0.id == zoneID }?.title ?? "" },
+            get: { editedProfile?.windowZones.first { $0.id == zoneID }?.displayTitle ?? "" },
             set: { title in
                 updateProfile { profile in
                     guard let index = profile.windowZones.firstIndex(where: { $0.id == zoneID }) else { return }
@@ -495,7 +497,7 @@ private struct ZonePreview: View {
                         .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color.accentColor.opacity(0.5)))
                         .overlay(alignment: .top) {
                             VStack(spacing: 4) {
-                                Text(verbatim: zone.title).font(.caption).bold()
+                                Text(verbatim: zone.displayTitle).font(.caption).bold()
                                 ForEach(rules.filter { $0.zoneID == zone.id }) { rule in
                                     Text(verbatim: rule.appName).font(.caption2).lineLimit(1)
                                 }
