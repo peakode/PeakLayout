@@ -8,15 +8,24 @@ struct ScreenInfo: Equatable {
 
     var resolutionText: String { "\(Int(size.width))×\(Int(size.height))" }
 
-    /// Menü çubuğunun olduğu ekran; masaüstü ikonları burada durur.
-    static func main() -> ScreenInfo? {
-        guard let screen = NSScreen.screens.first else { return nil }
+    init(name: String, size: CGSize, isBuiltIn: Bool) {
+        self.name = name
+        self.size = size
+        self.isBuiltIn = isBuiltIn
+    }
+
+    init(screen: NSScreen) {
         let displayID = screen.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? CGDirectDisplayID
-        return ScreenInfo(
+        self.init(
             name: screen.localizedName,
             size: screen.frame.size,
             isBuiltIn: displayID.map { CGDisplayIsBuiltin($0) != 0 } ?? false
         )
+    }
+
+    /// Menü çubuğunun olduğu ekran; masaüstü ikonları sadece burada durur.
+    static func main() -> ScreenInfo? {
+        NSScreen.screens.first.map(ScreenInfo.init(screen:))
     }
 }
 

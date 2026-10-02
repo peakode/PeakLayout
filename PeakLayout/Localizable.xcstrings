@@ -284,12 +284,12 @@
         }
       }
     },
-    "Copy rules from the active screen": {
+    "Copy rules from another screen": {
       "localizations": {
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Kuralları aktif ekrandan kopyala"
+            "value": "Kuralları başka ekrandan kopyala"
           }
         }
       }
@@ -400,6 +400,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Sırayı değiştirmek için sürükle. Değişiklik bir sonraki yerleşimde uygulanır."
+          }
+        }
+      }
+    },
+    "Every connected screen uses its own zones. A window follows the rules of the screen it is on. Apps without a rule are never moved.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bağlı her ekran kendi bölgelerini kullanır. Bir pencere, bulunduğu ekranın kurallarına uyar. Kuralı olmayan uygulamalara dokunulmaz."
           }
         }
       }
@@ -807,16 +817,6 @@
         }
       }
     },
-    "Rules are applied when the app launches, when the display changes and when you press Arrange now. Apps without a rule are never moved.": {
-      "localizations": {
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kurallar uygulama açıldığında, ekran değiştiğinde ve Şimdi yerleştir'e bastığında uygulanır. Kuralı olmayan uygulamalara dokunulmaz."
-          }
-        }
-      }
-    },
     "Screen": {
       "localizations": {
         "tr": {
@@ -867,16 +867,6 @@
         }
       }
     },
-    "Zones": {
-      "localizations": {
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Bölgeler"
-          }
-        }
-      }
-    },
     "Zones for": {
       "localizations": {
         "tr": {
@@ -893,6 +883,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "aktif"
+          }
+        }
+      }
+    },
+    "connected": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "bağlı"
+          }
+        }
+      }
+    },
+    "connected, main": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "bağlı, ana ekran"
           }
         }
       }

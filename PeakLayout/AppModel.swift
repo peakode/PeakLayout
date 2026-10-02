@@ -43,9 +43,6 @@ final class AppModel: ObservableObject {
 
     var activeMetrics: LayoutMetrics { activeProfile?.metrics ?? LayoutMetrics() }
 
-    /// Aktif ekranın bölgeleri; profil yoksa ya da bölge tanımlı değilse pencerelere dokunulmaz.
-    var activeZones: [WindowZone] { activeProfile?.windowZones ?? [] }
-    var activeWindowRules: [WindowRule] { activeProfile?.windowRules ?? [] }
 
     var engine: LayoutEngine? {
         screen.map { LayoutEngine(screenSize: $0.size, metrics: activeMetrics) }
@@ -116,6 +113,23 @@ final class AppModel: ObservableObject {
 
     // MARK: - Pencere bölgeleri
 
+    /// Bağlı bir ekran ve ona eşleşen profil. Masaüstü ikonları sadece ana ekranda durur,
+    /// pencere bölgeleri ise bağlı tüm ekranlarda çalışır.
+    struct ConnectedScreen {
+        let screen: NSScreen
+        let info: ScreenInfo
+        let profile: DisplayProfile?
+    }
+
+    var connectedScreens: [ConnectedScreen] {
+        NSScreen.screens.map { screen in
+            let info = ScreenInfo(screen: screen)
+            return ConnectedScreen(screen: screen, info: info, profile: settings.profiles.first { $0.matches(info) })
+        }
+    }
+
+    var connectedProfileIDs: Set<UUID> { Set(connectedScreens.compactMap { $0.profile?.id }) }
+
     /// Kurallı bir uygulama açıldığında penceresi hazır olana kadar birkaç kez denenir.
     func updateLaunchObserver() {
         if let launchObserver {
@@ -133,15 +147,13 @@ final class AppModel: ObservableObject {
     }
 
     private func arrangeLaunchedApp(bundleID: String, attempt: Int = 0) {
-        guard settings.windowZonesEnabled, attempt < 4,
-              let rule = activeWindowRules.first(where: { $0.bundleID == bundleID }),
-              let zone = activeZones.first(where: { $0.id == rule.zoneID }),
-              let layout = zoneLayout else { return }
-        let placed = WindowManager.runningApp(bundleID: bundleID).map {
-            WindowManager.place(app: $0, in: layout.frame(for: zone))
-        } ?? 0
-        if placed > 0 {
-            statusMessage = String(localized: "\(rule.appName) → \(zone.title)")
+        guard settings.windowZonesEnabled, WindowManager.isTrusted, attempt < 4 else { return }
+        let targets = zoneTargets(for: bundleID)
+        guard !targets.isEmpty else { return }
+        if arrange(bundleID: bundleID, targets: targets) > 0 {
+            if let app = WindowManager.runningApp(bundleID: bundleID)?.localizedName {
+                statusMessage = String(localized: "\(app) → \(targets[0].zoneTitle)")
+            }
             return
         }
         // Pencere henüz açılmamış olabilir: 1, 2.5 ve 5 sn sonra tekrar dene.
@@ -151,29 +163,61 @@ final class AppModel: ObservableObject {
         }
     }
 
-    var zoneLayout: ZoneLayout? {
-        NSScreen.screens.first.map { ZoneLayout(screen: $0, gap: settings.windowGap) }
-    }
-
     var accessibilityGranted: Bool { WindowManager.isTrusted }
 
-    /// Kurallı tüm uygulamaları bölgelerine yerleştirir.
+    /// Bir uygulamanın bağlı ekranlardaki hedef bölgeleri (her ekran için en fazla bir tane).
+    private struct ZoneTarget {
+        let screenRect: CGRect
+        let frame: CGRect
+        let zoneTitle: String
+    }
+
+    private func zoneTargets(for bundleID: String) -> [ZoneTarget] {
+        connectedScreens.compactMap { connected in
+            guard let profile = connected.profile,
+                  let rule = profile.windowRules.first(where: { $0.bundleID == bundleID }),
+                  let zone = profile.windowZones.first(where: { $0.id == rule.zoneID }) else { return nil }
+            let layout = ZoneLayout(screen: connected.screen, gap: settings.windowGap)
+            return ZoneTarget(screenRect: layout.screenRect, frame: layout.frame(for: zone), zoneTitle: zone.title)
+        }
+    }
+
+    /// Her pencere bulunduğu ekranın kuralına göre yerleşir. Bulunduğu ekranda kural yoksa
+    /// kuralı olan ilk ekrana taşınır. Yerleştirilen pencere sayısını döndürür.
+    private func arrange(bundleID: String, targets: [ZoneTarget]) -> Int {
+        guard let app = WindowManager.runningApp(bundleID: bundleID), let fallback = targets.first else { return 0 }
+        var placed = 0
+        for window in WindowManager.windows(of: app) {
+            let current = WindowManager.frame(of: window)
+            let center = current.map { CGPoint(x: $0.midX, y: $0.midY) }
+            let target = center.flatMap { point in targets.first { $0.screenRect.contains(point) } } ?? fallback
+            if WindowManager.move(window, to: target.frame) { placed += 1 }
+        }
+        return placed
+    }
+
+    /// Kurallı tüm uygulamaları, bağlı tüm ekranlarda bölgelerine yerleştirir.
     func arrangeWindows(reason: String) {
         screen = ScreenInfo.main()
-        guard settings.windowZonesEnabled, !activeWindowRules.isEmpty, !activeZones.isEmpty else { return }
+        guard settings.windowZonesEnabled else { return }
+        let bundleIDs = Set(connectedScreens.flatMap { connected -> [String] in
+            guard let profile = connected.profile, !profile.windowZones.isEmpty else { return [] }
+            return profile.windowRules.map(\.bundleID)
+        })
+        guard !bundleIDs.isEmpty else { return }
         guard WindowManager.isTrusted else {
             lastError = String(localized: "Accessibility permission is required to arrange windows. Turn on PeakLayout in System Settings › Privacy & Security › Accessibility.")
             return
         }
-        guard let layout = zoneLayout else { return }
 
         var placed = 0
         var missing: [String] = []
-        for rule in activeWindowRules {
-            guard let zone = activeZones.first(where: { $0.id == rule.zoneID }) else { continue }
-            guard let app = WindowManager.runningApp(bundleID: rule.bundleID) else { continue }
-            let count = WindowManager.place(app: app, in: layout.frame(for: zone))
-            if count == 0 { missing.append(rule.appName) } else { placed += count }
+        for bundleID in bundleIDs.sorted() {
+            // Açık olmayan uygulamalar atlanır; açılınca kendi kuralıyla yerleşir.
+            guard let app = WindowManager.runningApp(bundleID: bundleID) else { continue }
+            let count = arrange(bundleID: bundleID, targets: zoneTargets(for: bundleID))
+            if count == 0, !WindowManager.windows(of: app).isEmpty { missing.append(app.localizedName ?? bundleID) }
+            placed += count
         }
         lastError = missing.isEmpty ? nil
             : String(localized: "Could not arrange: \(missing.joined(separator: ", "))")

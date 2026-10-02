@@ -36,6 +36,13 @@ struct ZoneLayout {
     /// Pencereler arası ve kenarlardaki boşluk.
     var gap: Double = 0
 
+    /// Ekranın tamamı, Accessibility koordinatlarında.
+    var screenRect: CGRect {
+        let mainTop = (NSScreen.screens.first ?? screen).frame.maxY
+        return CGRect(x: screen.frame.minX, y: mainTop - screen.frame.maxY,
+                      width: screen.frame.width, height: screen.frame.height)
+    }
+
     /// Accessibility koordinatları ana ekranın SOL ÜSTÜNDEN başlar ve aşağı doğru artar.
     func frame(for zone: WindowZone) -> CGRect {
         let visible = screen.visibleFrame
